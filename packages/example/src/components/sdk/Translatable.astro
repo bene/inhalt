@@ -1,0 +1,24 @@
+---
+import {
+  TranslatableClient,
+  type TranslatableProps,
+} from "./TranslatableClient";
+
+type Props = Omit<TranslatableProps, "text">;
+
+const props = Astro.props;
+
+// TODO: Load text from API
+const text = "Text from API";
+const isPreviewMode = import.meta.env.MODE === "development";
+---
+
+<Fragment>
+  {
+    isPreviewMode ? (
+      <TranslatableClient {text} {...props} client:only />
+    ) : (
+      <p>{text}</p>
+    )
+  }
+</Fragment>

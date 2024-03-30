@@ -1,0 +1,49 @@
+---
+import { AddSectionTool } from "../components/sdk/AddSectionTool";
+import Translatable from "../components/sdk/Translatable.astro";
+import Text1 from "../components/Text1.astro";
+import Text2 from "../components/Text2.astro";
+
+export function getStaticPaths() {
+  // Fetch pages from API
+  return [{ params: { slug: "/" } }, { params: { slug: "/about" } }];
+}
+
+const { slug } = Astro.params;
+
+const components = {
+  Text1,
+  Text2,
+};
+
+let sections = [] as any;
+
+const date = new Date().toLocaleString();
+const isPreviewMode = import.meta.env.MODE === "development";
+---
+
+<p class="text-xl">Page</p>
+<p>{date}</p>
+<p>{slug}</p>
+<Translatable key="hello.world" />
+
+{
+  sections.map((component: any, index: number) => {
+    const Component =
+      components[component.componentName as keyof typeof components];
+
+    return (
+      <Fragment>
+        <Component {...(component.props as any)} />
+        {isPreviewMode && (
+          <AddSectionTool insertIndex={index + 1} client:only />
+        )}
+      </Fragment>
+    );
+  })
+}
+{
+  sections.length === 0 && isPreviewMode && (
+    <AddSectionTool insertIndex={0} showAlways client:only />
+  )
+}
