@@ -81,7 +81,5 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
     );
   }, [rect]);
 
-  return (
-    <div ref={elRef} className="hidden" data-inhalt-marker-for={sectionId} />
-  );
+  return <div ref={elRef} className="hidden" />;
 }

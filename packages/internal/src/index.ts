@@ -7,7 +7,7 @@ export async function getComponents(config: Config, rootPath: string) {
   const project = new Project({
     useInMemoryFileSystem: true,
     compilerOptions: {
-      plugins: [{ name: "@astrojs/ts-plugind" }],
+      plugins: [{ name: "@astrojs/ts-plugin" }],
     },
   });
 
