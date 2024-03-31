@@ -1,14 +1,21 @@
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from 'astro/config';
+import EventEmitter from "events";
 import { readdir, writeFile } from "fs/promises";
 import { join } from "path";
+
+const emitter = new EventEmitter();
 
 function connect(server) {
   const ws = new WebSocket("ws://localhost:3000/ws?kind=hmr");
 
   ws.onopen = () => {
     console.log("Connected");
+
+    emitter.on("send", (data) => {
+      ws.send(JSON.stringify(data))
+    })
   };
 
   ws.onmessage = () => {
@@ -46,6 +53,9 @@ async function rebuildComponentsFile() {
 
   // Save to node_modules/inhalt a la prisma client
   await writeFile("sections.gen.ts", sectionsFileSource)
+
+  // Return the component names
+  return components.map(c => c.name)
 }
 
 const config = {
@@ -63,15 +73,15 @@ export default defineConfig({
       },
       "astro:server:setup": ({ server }) => {
         // Watch for changes in the sections folder
-        const onWatchEvent = (file) => {
+        const onWatchAddOrUnlink = async (file) => {
           if (file.includes(config.sections)) {
-            rebuildComponentsFile()
+            const componentNames = await rebuildComponentsFile()
+            emitter.emit("send", { kind: "componentsAddOrRemove", componentNames })
           }
         }
 
-        server.watcher.on("change", onWatchEvent)
-        server.watcher.on("add", onWatchEvent)
-        server.watcher.on("unlink", onWatchEvent)
+        server.watcher.on("add", onWatchAddOrUnlink)
+        server.watcher.on("unlink", onWatchAddOrUnlink)
         server.watcher.add(config.sections)
 
         // Connect to CMS

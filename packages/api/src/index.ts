@@ -82,6 +82,8 @@ app.get(
         });
       },
       onMessage: (event, ws) => {
+        console.log("Received message:", event.data);
+
         for (const connection of webSocketConnections.values()) {
           if (connection.ws !== ws) {
             connection.ws.send("Hello from server!");
