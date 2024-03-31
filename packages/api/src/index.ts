@@ -75,8 +75,9 @@ app.post("/integration/github", async (context) => {
 
   const event = res.data;
   const token = await getAccessToken(event.installation.id);
+  const cloneUrl = `https://x-access-token:${token}@${event.repository.clone_url.slice(8)}`;
 
-  console.log({ event });
+  console.log({ event, token, cloneUrl });
 
   return Response.json(null, { status: 201 });
 });
