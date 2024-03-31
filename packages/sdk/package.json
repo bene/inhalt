@@ -1,0 +1,18 @@
+{
+  "name": "@inhalt/astro",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": {
+    "inhalt-sync": "bin/sync.ts"
+  },
+  "dependencies": {
+    "@inhalt/schema": "workspace:*",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

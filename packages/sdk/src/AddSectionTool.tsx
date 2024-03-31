@@ -39,10 +39,6 @@ export function AddSectionTool({
     return () => ac.abort();
   }, []);
 
-  const onClick = () => {
-    console.log("Add section at index", insertIndex);
-  };
-
   return (
     <div className="w-screen h-0">
       <div

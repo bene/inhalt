@@ -1,0 +1,43 @@
+---
+import components from "../example/sections.gen";
+import { AddSectionTool } from "./src/AddSectionTool";
+import { SectionMarker } from "./src/SectionMarker";
+import { getPage } from "./src/index";
+
+const { slug } = Astro.params;
+const page = await getPage(slug);
+const isPreviewMode = import.meta.env.MODE === "development";
+---
+
+{
+  page.sections.length >= 1 ? (
+    page.sections.map((section, index) => {
+      const Component =
+        components[section.componentName as keyof typeof components];
+
+      if (!Component) {
+        return <p>Component not found: {section.componentName}</p>;
+      }
+
+      return (
+        <Fragment>
+          {isPreviewMode && (
+            <SectionMarker sectionId={section.id} client:load />
+          )}
+
+          <Component {...(section.props as any)} />
+
+          {isPreviewMode && (
+            <AddSectionTool
+              pageId={page.id}
+              insertIndex={index + 1}
+              client:only
+            />
+          )}
+        </Fragment>
+      );
+    })
+  ) : isPreviewMode ? (
+    <AddSectionTool pageId={page.id} insertIndex={0} showAlways client:load />
+  ) : null
+}
