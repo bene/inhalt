@@ -1,15 +1,15 @@
 ---
+import { pageValidator, pagesValidator } from "@inhalt/schema";
 import components from "../../sections.gen";
 import { AddSectionTool } from "../components/sdk/AddSectionTool";
-import { pageResponseValidator, pagesResponseValidator } from "../validation";
 
 export async function getStaticPaths() {
   const res = await fetch("http://localhost:3000/pages");
   const raw = await res.json();
-  const pages = pagesResponseValidator.parse(raw);
+  const pages = pagesValidator.parse(raw);
 
   const paths = pages.map((page) => ({
-    params: { slug: page.slug },
+    params: { slug: page.slug === "index" ? "/" : page.slug },
   }));
 
   return paths;
@@ -19,11 +19,12 @@ const { slug } = Astro.params;
 
 const res = await fetch(`http://localhost:3000/page/${slug ?? "index"}`);
 const raw = await res.json();
-const page = pageResponseValidator.parse(raw);
+const page = pageValidator.parse(raw);
 
 const isPreviewMode = import.meta.env.MODE === "development";
 ---
 
+<p class="hidden">Test</p>
 {
   page.sections.length >= 1 ? (
     page.sections.map((section, index) => {
@@ -44,6 +45,6 @@ const isPreviewMode = import.meta.env.MODE === "development";
       );
     })
   ) : isPreviewMode ? (
-    <AddSectionTool insertIndex={0} showAlways client:only />
+    <AddSectionTool insertIndex={0} showAlways client:load />
   ) : null
 }

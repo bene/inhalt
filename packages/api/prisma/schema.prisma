@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Component {
+  name        String    @id
+  propsSchema Json?
+  sections    Section[]
+}
+
+model Page {
+  id       String    @id @default(uuid()) @db.Uuid
+  slug     String    @unique
+  sections Section[]
+}
+
+model Section {
+  id            String    @id @default(uuid()) @db.Uuid
+  page          Page      @relation(fields: [pageSlug], references: [slug])
+  pageSlug      String
+  component     Component @relation(fields: [componentName], references: [name])
+  componentName String
+  props         Json?
+}

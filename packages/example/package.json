@@ -10,6 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@inhalt/schema": "workspace:*",
     "@astrojs/check": "^0.5.10",
     "@astrojs/react": "^3.1.0",
     "@astrojs/tailwind": "^5.1.0",

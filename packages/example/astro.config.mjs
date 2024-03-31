@@ -6,9 +6,13 @@ import { readdir, writeFile } from "fs/promises";
 import { join } from "path";
 
 const emitter = new EventEmitter();
+const config = {
+  url: "localhost:3000",
+  sections: "src/sections"
+}
 
 function connect(server) {
-  const ws = new WebSocket("ws://localhost:3000/ws?kind=hmr");
+  const ws = new WebSocket(`ws://${config.url}/realtime?kind=server`);
 
   ws.onopen = () => {
     console.log("Connected");
@@ -58,25 +62,42 @@ async function rebuildComponentsFile() {
   return components.map(c => c.name)
 }
 
-const config = {
-  url: "http://localhost:3000",
-  sections: "src/sections"
-}
+
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [react(), tailwind(), {
     name: "inhalt",
     hooks: {
-      "astro:config:setup": () => {
-        rebuildComponentsFile()
+      "astro:config:setup": async () => {
+        const componentNames = await rebuildComponentsFile()
+        const msg = {
+          kind: "components:update",
+          components: componentNames.map(name => ({
+            name,
+            propsSchema: null
+          }))
+        }
+
+        await fetch(`http://${config.url}/components`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(msg)
+        })
       },
       "astro:server:setup": ({ server }) => {
         // Watch for changes in the sections folder
         const onWatchAddOrUnlink = async (file) => {
           if (file.includes(config.sections)) {
             const componentNames = await rebuildComponentsFile()
-            emitter.emit("send", { kind: "componentsAddOrRemove", componentNames })
+            emitter.emit("send", {
+              kind: "components:update", components: componentNames.map(name => ({
+                name,
+                propsSchema: null
+              }))
+            })
           }
         }
 
