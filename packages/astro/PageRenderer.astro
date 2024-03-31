@@ -24,7 +24,11 @@ const isPreviewMode = import.meta.env.MODE === "development";
         return (
           <Fragment>
             {isPreviewMode && (
-              <SectionMarker sectionId={section.id} client:load />
+              <SectionMarker
+                sectionId={section.id}
+                sectionOrder={index}
+                client:load
+              />
             )}
 
             <Component {...(section.props as any)} />

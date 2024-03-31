@@ -88,10 +88,29 @@ export const msgHmrReload = z.object({
   kind: z.literal("hmr:reload"),
 });
 
+export const msgRectChange = z.object({
+  kind: z.literal("rect:change"),
+  sectionId: z.string(),
+  order: z.number(),
+  rect: z.object({
+    x: z.number(),
+    y: z.number(),
+    width: z.number(),
+    height: z.number(),
+    bottom: z.number().default(0),
+    left: z.number().default(0),
+    right: z.number().default(0),
+    top: z.number().default(0),
+  }),
+});
+
+export type RectChangeMessage = z.infer<typeof msgRectChange>;
+
 export const realtimeMessage = z.union([
   msgUpdateComponents,
   msgUpdatePage,
   msgHmrReload,
+  msgRectChange,
 ]);
 
 export type RealtimeMessage = z.infer<typeof realtimeMessage>;

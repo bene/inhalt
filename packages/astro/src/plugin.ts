@@ -8,7 +8,7 @@ import type { ViteDevServer } from "vite";
 const emitter = new EventEmitter();
 
 function connect(config: Config, server: ViteDevServer) {
-  const ws = new WebSocket(`ws://${config.url}/realtime?kind=server`);
+  const ws = new WebSocket(`${config.wsUrl}realtime?kind=server`);
 
   ws.onopen = () => {
     console.log("Connected");
@@ -75,7 +75,9 @@ export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
           join(astroConfig.root.pathname, config.sections)
         );
       },
-      "astro:server:setup": ({ server }) => {},
+      "astro:server:setup": ({ server }) => {
+        connect(config, server);
+      },
     },
   };
 }
