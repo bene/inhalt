@@ -18,7 +18,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
       {
         name: "node",
         entrypoint: "bash",
-        args: [`npm i -g bun \ bun install --frozen-lock-file`],
+        args: [`npm i -g bun \\ bun install --frozen-lock-file`],
       },
     ],
   };
