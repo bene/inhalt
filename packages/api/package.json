@@ -7,6 +7,7 @@
     "@inhalt/schema": "workspace:*",
     "@prisma/client": "^5.11.0",
     "hono": "^4.1.5",
+    "jsonwebtoken": "^9.0.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {

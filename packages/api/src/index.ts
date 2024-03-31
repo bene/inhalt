@@ -45,6 +45,16 @@ function broadcastRealtimeMessage(
 
 app.use("/*", cors());
 
+app.post("/integration/github", async (context) => {
+  const event = context.req.header("x-github-event");
+  console.log(event);
+
+  if (event === "push") {
+  }
+
+  return Response.json(null, { status: 201 });
+});
+
 app.get("/pages", async (context) => {
   const pages = await prisma.page.findMany({
     select: {
