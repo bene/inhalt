@@ -1,5 +1,5 @@
 {
-  "name": "inhalt-example-astro",
+  "name": "@inhalt/example",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@inhalt/astro": "workspace:*",
-    "@inhalt/schema": "workspace:*",
     "@astrojs/check": "^0.5.10",
     "@astrojs/react": "^3.1.0",
     "@astrojs/tailwind": "^5.1.0",
