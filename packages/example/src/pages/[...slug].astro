@@ -1,49 +1,49 @@
 ---
+import components from "../../sections.gen";
 import { AddSectionTool } from "../components/sdk/AddSectionTool";
-import Translatable from "../components/sdk/Translatable.astro";
-import Text1 from "../components/Text1.astro";
-import Text2 from "../components/Text2.astro";
+import { pageResponseValidator, pagesResponseValidator } from "../validation";
 
-export function getStaticPaths() {
-  // Fetch pages from API
-  return [{ params: { slug: "/" } }, { params: { slug: "/about" } }];
+export async function getStaticPaths() {
+  const res = await fetch("http://localhost:3000/pages");
+  const raw = await res.json();
+  const pages = pagesResponseValidator.parse(raw);
+
+  const paths = pages.map((page) => ({
+    params: { slug: page.slug },
+  }));
+
+  return paths;
 }
 
 const { slug } = Astro.params;
 
-const components = {
-  Text1,
-  Text2,
-};
+const res = await fetch(`http://localhost:3000/page/${slug ?? "index"}`);
+const raw = await res.json();
+const page = pageResponseValidator.parse(raw);
 
-let sections = [] as any;
-
-const date = new Date().toLocaleString();
 const isPreviewMode = import.meta.env.MODE === "development";
 ---
 
-<p class="text-xl">Page</p>
-<p>{date}</p>
-<p>{slug}</p>
-<Translatable key="hello.world" />
-
 {
-  sections.map((component: any, index: number) => {
-    const Component =
-      components[component.componentName as keyof typeof components];
+  page.sections.length >= 1 ? (
+    page.sections.map((section, index) => {
+      const Component =
+        components[section.componentName as keyof typeof components];
 
-    return (
-      <Fragment>
-        <Component {...(component.props as any)} />
-        {isPreviewMode && (
-          <AddSectionTool insertIndex={index + 1} client:only />
-        )}
-      </Fragment>
-    );
-  })
-}
-{
-  sections.length === 0 && isPreviewMode && (
+      if (!Component) {
+        return <p>Component not found: {section.componentName}</p>;
+      }
+
+      return (
+        <Fragment>
+          <Component {...(section.props as any)} />
+          {isPreviewMode && (
+            <AddSectionTool insertIndex={index + 1} client:only />
+          )}
+        </Fragment>
+      );
+    })
+  ) : isPreviewMode ? (
     <AddSectionTool insertIndex={0} showAlways client:only />
-  )
+  ) : null
 }
