@@ -174,12 +174,14 @@ app.put(
   }),
   async (context) => {
     const { body: msg } = context.req.valid("json");
+    const existingComponents = await prisma.component.findMany();
+    const newComponents = msg.components.filter(
+      (c) => !existingComponents.some((ec) => ec.name === c.name)
+    );
 
-    // TODO: Do proper diffing
     await prisma.$transaction([
-      prisma.component.deleteMany(),
       prisma.component.createMany({
-        data: msg.components.map((c) => ({
+        data: newComponents.map((c) => ({
           name: c.name,
           propsSchema: c.propsSchema ?? Prisma.DbNull,
         })),

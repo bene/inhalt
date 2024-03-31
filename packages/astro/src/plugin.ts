@@ -44,11 +44,27 @@ export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
     hooks: {
       "astro:config:setup": async ({ config: astroConfig }) => {
         await getComponents(config, astroConfig.root.pathname);
-        await generateComponentsFile(
+        const names = await generateComponentsFile(
           config,
           astroConfig.root.pathname,
           __dirname
         );
+
+        const msg = {
+          kind: "components:update",
+          components: names.map((name) => ({
+            name,
+            propsSchema: null,
+          })),
+        };
+
+        const res = await fetch(`${config.url}components`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(msg),
+        });
       },
       "astro:server:setup": ({ server }) => {
         connect(config, server);
