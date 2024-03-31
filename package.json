@@ -6,7 +6,8 @@
   ],
   "dependencies": {
     "@astrojs/ts-plugin": "^1.6.1",
-    "astro": "^4.5.12"
+    "astro": "^4.5.12",
+    "google-auth-library": "^9.7.0"
   },
   "devDependencies": {
     "@types/bun": "^1.0.12",
