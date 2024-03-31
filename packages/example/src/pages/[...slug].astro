@@ -38,17 +38,18 @@ const isPreviewMode = import.meta.env.MODE === "development";
 
       return (
         <Fragment>
+          {isPreviewMode && (
+            <SectionMarker sectionId={section.id} client:load />
+          )}
+
           <Component {...(section.props as any)} />
 
           {isPreviewMode && (
-            <Fragment>
-              <SectionMarker sectionId={section.id} />
-              <AddSectionTool
-                pageId={page.id}
-                insertIndex={index + 1}
-                client:only
-              />
-            </Fragment>
+            <AddSectionTool
+              pageId={page.id}
+              insertIndex={index + 1}
+              client:only
+            />
           )}
         </Fragment>
       );
