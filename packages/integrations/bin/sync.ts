@@ -2,4 +2,4 @@
 
 const url = import.meta.env.INHALT_URL ?? "https://cloud.inhalt.io";
 
-console.log("syncing...");
+console.log("syncing...", url);
