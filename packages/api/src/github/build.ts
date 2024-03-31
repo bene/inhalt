@@ -16,7 +16,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
         args: ["clone", cloneUrl, "/workspace"],
       },
       {
-        name: "bunoven/bun:1",
+        name: "oven/bun:1",
         entrypoint: "bun",
         args: ["install", "--frozen-lock-file"],
       },
