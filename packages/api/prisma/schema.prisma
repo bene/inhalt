@@ -21,9 +21,10 @@ model Page {
 
 model Section {
   id            String    @id @default(uuid()) @db.Uuid
-  page          Page      @relation(fields: [pageSlug], references: [slug])
-  pageSlug      String
+  page          Page      @relation(fields: [pageId], references: [id])
+  pageId        String    @db.Uuid
   component     Component @relation(fields: [componentName], references: [name])
   componentName String
   props         Json?
+  order         Int
 }

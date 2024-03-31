@@ -1,11 +1,13 @@
 import {
   RealtimeMessage,
   msgUpdateComponents,
+  msgUpdatePage,
   realtimeMessage,
 } from "@inhalt/schema";
 import { Prisma } from "@prisma/client";
 import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
+import { cors } from "hono/cors";
 import { validator } from "hono/validator";
 import { WSContext } from "hono/ws";
 
@@ -41,6 +43,8 @@ function broadcastRealtimeMessage(
   }
 }
 
+app.use("/*", cors());
+
 app.get("/pages", async (context) => {
   const pages = await prisma.page.findMany({
     select: {
@@ -66,11 +70,92 @@ app.get("/page/:slug", async (context) => {
           componentName: true,
           props: true,
         },
+        orderBy: {
+          order: "asc",
+        },
       },
     },
   });
 
   return Response.json(page, { status: page ? 200 : 404 });
+});
+
+app.patch(
+  "/page/:slug",
+  validator("json", (value) => {
+    const result = msgUpdatePage.safeParse(value);
+
+    if (!result.success) {
+      return Response.json(result.error, { status: 400 });
+    }
+
+    return {
+      body: result.data,
+    };
+  }),
+  async (context) => {
+    const { body: msg } = context.req.valid("json");
+
+    // Currently only a single update is supported
+    const update = msg.updates.at(0);
+
+    if (!update) {
+      return Response.json(null, { status: 400 });
+    }
+
+    await prisma.$transaction([
+      prisma.section.updateMany({
+        where: {
+          pageId: msg.pageId,
+          order: {
+            gte: update.order,
+          },
+        },
+        data: {
+          order:
+            update.operation === "add"
+              ? {
+                  increment: 1,
+                }
+              : update.operation === "remove"
+                ? {
+                    decrement: 1,
+                  }
+                : undefined,
+        },
+      }),
+      prisma.section.create({
+        data: {
+          pageId: msg.pageId,
+          componentName: update.componentName,
+          order: update.order,
+          props: (update.props as any) ?? Prisma.DbNull,
+        },
+      }),
+    ]);
+
+    broadcastRealtimeMessage(
+      {
+        kind: "hmr:reload",
+      },
+      {
+        target: "server",
+      }
+    );
+
+    return Response.json(null, { status: 201 });
+  }
+);
+
+app.get("/components", async (context) => {
+  const components = await prisma.component.findMany({
+    select: {
+      name: true,
+      propsSchema: true,
+    },
+  });
+
+  return Response.json(components);
 });
 
 app.put(
