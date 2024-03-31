@@ -13,6 +13,7 @@ import { WSContext } from "hono/ws";
 
 import { z } from "zod";
 import { getAccessToken } from "./github/auth";
+import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
@@ -79,7 +80,7 @@ app.post("/integration/github", async (context) => {
   const token = await getAccessToken("866924", event.installation.id);
   const cloneUrl = `https://x-access-token:${token}@${event.repository.clone_url.slice(8)}`;
 
-  console.log({ event, token, cloneUrl });
+  triggerCloudBuild(cloneUrl);
 
   return Response.json(null, { status: 201 });
 });
