@@ -67,6 +67,7 @@ app.get("/page/:slug", async (context) => {
       slug: true,
       sections: {
         select: {
+          id: true,
           componentName: true,
           props: true,
         },

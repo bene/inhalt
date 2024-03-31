@@ -32,6 +32,7 @@ export const pageValidator = z.object({
   slug: z.string(),
   sections: z.array(
     z.object({
+      id: z.string(),
       componentName: z.string(),
       props: propsValidator,
     })

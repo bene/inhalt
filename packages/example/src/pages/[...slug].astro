@@ -2,6 +2,7 @@
 import { pageValidator, pagesValidator } from "@inhalt/schema";
 import components from "../../sections.gen";
 import { AddSectionTool } from "../components/sdk/AddSectionTool";
+import { SectionMarker } from "../components/sdk/SectionMarker";
 
 export async function getStaticPaths() {
   const res = await fetch("http://localhost:3000/pages");
@@ -38,12 +39,16 @@ const isPreviewMode = import.meta.env.MODE === "development";
       return (
         <Fragment>
           <Component {...(section.props as any)} />
+
           {isPreviewMode && (
-            <AddSectionTool
-              pageId={page.id}
-              insertIndex={index + 1}
-              client:only
-            />
+            <Fragment>
+              <SectionMarker sectionId={section.id} />
+              <AddSectionTool
+                pageId={page.id}
+                insertIndex={index + 1}
+                client:only
+              />
+            </Fragment>
           )}
         </Fragment>
       );
