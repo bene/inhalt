@@ -12,6 +12,7 @@ import { validator } from "hono/validator";
 import { WSContext } from "hono/ws";
 
 import { z } from "zod";
+import { getAccessToken } from "./github/auth";
 import { prisma } from "./prisma";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
@@ -73,6 +74,7 @@ app.post("/integration/github", async (context) => {
   }
 
   const event = res.data;
+  const token = await getAccessToken(event.installation.id);
 
   console.log({ event });
 
