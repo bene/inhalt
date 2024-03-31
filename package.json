@@ -5,6 +5,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "@astrojs/ts-plugin": "^1.6.1",
     "astro": "^4.5.12"
   },
   "devDependencies": {

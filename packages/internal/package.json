@@ -1,13 +1,10 @@
 {
-  "name": "@inhalt/astro",
+  "name": "@inhalt/internal",
   "type": "module",
   "main": "src/index.ts",
-  "bin": {
-    "inhalt-sync": "bin/sync.ts"
-  },
   "dependencies": {
     "@inhalt/schema": "workspace:*",
-    "@inhalt/internal": "workspace:*",
+    "ts-morph": "^22.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
