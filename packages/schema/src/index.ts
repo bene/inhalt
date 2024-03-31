@@ -1,8 +1,24 @@
 import { z } from "zod";
 
-export const configValidator = z.object({
-  url: z.string(),
+export const configInputValidator = z.object({
+  url: z.union([
+    z.string().startsWith("http://"),
+    z.string().startsWith("https://"),
+  ]),
   sections: z.string(),
+});
+
+export type ConfigInput = z.infer<typeof configInputValidator>;
+
+export const configValidator = configInputValidator.transform((config) => {
+  const wsUrl = new URL(config.url);
+  wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
+
+  return {
+    ...config,
+    url: new URL(config.url).toString(),
+    wsUrl: wsUrl.toString(),
+  };
 });
 
 export type Config = z.infer<typeof configValidator>;

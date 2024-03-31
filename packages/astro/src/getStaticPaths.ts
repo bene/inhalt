@@ -9,5 +9,8 @@ export async function getStaticPaths() {
     params: { slug: page.slug === "index" ? "/" : page.slug },
   }));
 
+  const projectPath = Bun.main.split("node_modules/astro").at(0);
+  console.log(projectPath);
+
   return paths;
 }

@@ -1,7 +1,9 @@
 ---
-import components from "../example/sections.gen";
 import { SectionMarker } from "./src/SectionMarker";
 import { getPage } from "./src/index";
+
+const componentsMod = await import("./gen/sections.gen");
+const components = componentsMod.default;
 
 const { slug } = Astro.params;
 const page = await getPage(slug);
@@ -11,8 +13,9 @@ const isPreviewMode = import.meta.env.MODE === "development";
 {
   page.sections.length >= 1
     ? page.sections.map((section, index) => {
-        const Component =
-          components[section.componentName as keyof typeof components];
+        const Component = components[
+          section.componentName as keyof typeof components
+        ] as any;
 
         if (!Component) {
           return <p>Component not found: {section.componentName}</p>;

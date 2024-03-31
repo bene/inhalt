@@ -3,5 +3,12 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "astro": "^4.5.12"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.12",
+    "vite": "^5.2.7"
+  }
 }
