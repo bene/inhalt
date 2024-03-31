@@ -68,13 +68,15 @@ app.post("/integration/github", async (context) => {
     return;
   }
 
+  console.log(body);
+
   const res = pushEventValidator.safeParse(body);
   if (!res.success) {
     return Response.json(null, { status: 200 });
   }
 
   const event = res.data;
-  const token = await getAccessToken(event.installation.id);
+  const token = await getAccessToken("866924", event.installation.id);
   const cloneUrl = `https://x-access-token:${token}@${event.repository.clone_url.slice(8)}`;
 
   console.log({ event, token, cloneUrl });
