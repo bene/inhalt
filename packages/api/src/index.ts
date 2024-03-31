@@ -12,7 +12,6 @@ import { validator } from "hono/validator";
 import { WSContext } from "hono/ws";
 
 import { z } from "zod";
-import { getAccessToken } from "./github/auth";
 import { prisma } from "./prisma";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
@@ -53,6 +52,7 @@ const pushEventValidator = z.object({
     name: z.string(),
     full_name: z.string(),
     clone_url: z.string(),
+    temp_clone_token: z.string(),
   }),
   installation: z.object({
     id: z.number(),
@@ -73,9 +73,8 @@ app.post("/integration/github", async (context) => {
   }
 
   const event = res.data;
-  const token = await getAccessToken(event.installation.id);
 
-  console.log({ event, token });
+  console.log({ event });
 
   return Response.json(null, { status: 201 });
 });
