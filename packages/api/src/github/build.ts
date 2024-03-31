@@ -18,17 +18,12 @@ export async function triggerCloudBuild(cloneUrl: string) {
       {
         name: "node",
         entrypoint: "npm",
-        args: "install",
+        args: ["install", "-g", "bun"],
       },
       {
-        name: "gcr.io/cloud-builders/gsutil",
-        args: [
-          "-m",
-          "cp",
-          "-r",
-          "public*",
-          "gs://previews.daisycms.com/$BUILD_ID",
-        ],
+        name: "node",
+        entrypoint: "bun",
+        args: ["install", "--frozen-lock-file"],
       },
     ],
   };

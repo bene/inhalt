@@ -69,8 +69,6 @@ app.post("/integration/github", async (context) => {
     return;
   }
 
-  console.log(body);
-
   const res = pushEventValidator.safeParse(body);
   if (!res.success) {
     return Response.json(null, { status: 200 });
