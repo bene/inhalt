@@ -47,7 +47,9 @@ app.use("/*", cors());
 
 app.post("/integration/github", async (context) => {
   const event = context.req.header("x-github-event");
-  console.log(event);
+  const body = await context.req.json();
+
+  console.log(event, body);
 
   if (event === "push") {
   }
