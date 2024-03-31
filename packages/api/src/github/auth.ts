@@ -1,14 +1,14 @@
 import { readFile } from "fs/promises";
 import { sign } from "jsonwebtoken";
 
-async function getJwt() {
+async function getJwt(githubAppId: string) {
   const key = await readFile("github.pem", "utf-8");
   const now = Date.now();
   const token = sign(
     {
       iat: Math.round(now / 1000) - 60,
       exp: Math.round(now / 1000) + 60 * 9,
-      iss: "205144",
+      iss: githubAppId,
     },
     key,
     {
@@ -18,8 +18,11 @@ async function getJwt() {
   return token;
 }
 
-export async function getAccessToken(installationId: number) {
-  const jwt = await getJwt();
+export async function getAccessToken(
+  githubAppId: string,
+  installationId: number
+) {
+  const jwt = await getJwt(githubAppId);
   const headers = {
     Authorization: `Bearer ${jwt}`,
     Accept: "application/vnd.github.v3+json",

@@ -11,6 +11,9 @@ import { cors } from "hono/cors";
 import { validator } from "hono/validator";
 import { WSContext } from "hono/ws";
 
+import { z } from "zod";
+import { getAccessToken } from "./github/auth";
+import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
@@ -45,12 +48,37 @@ function broadcastRealtimeMessage(
 
 app.use("/*", cors());
 
-app.post("/integration/github", async (context) => {
-  const event = context.req.header("x-github-event");
-  console.log(event);
+const pushEventValidator = z.object({
+  ref: z.string(),
+  repository: z.object({
+    id: z.number(),
+    name: z.string(),
+    full_name: z.string(),
+    clone_url: z.string(),
+  }),
+  installation: z.object({
+    id: z.number(),
+  }),
+});
 
-  if (event === "push") {
+app.post("/integration/github", async (context) => {
+  const eventName = context.req.header("x-github-event");
+  const body = await context.req.json();
+
+  if (eventName !== "push") {
+    return;
   }
+
+  const res = pushEventValidator.safeParse(body);
+  if (!res.success) {
+    return Response.json(null, { status: 200 });
+  }
+
+  const event = res.data;
+  const token = await getAccessToken("866924", event.installation.id);
+  const cloneUrl = `https://x-access-token:${token}@${event.repository.clone_url.slice(8)}`;
+
+  triggerCloudBuild(cloneUrl);
 
   return Response.json(null, { status: 201 });
 });
