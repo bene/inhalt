@@ -16,12 +16,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
         args: ["clone", cloneUrl, "/workspace"],
       },
       {
-        name: "node",
-        entrypoint: "npm",
-        args: ["install", "-g", "bun"],
-      },
-      {
-        name: "node",
+        name: "bun",
         entrypoint: "bun",
         args: ["install", "--frozen-lock-file"],
       },
