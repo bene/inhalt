@@ -49,10 +49,10 @@ app.use("/*", cors());
 const pushEventValidator = z.object({
   ref: z.string(),
   repository: z.object({
+    id: z.number(),
     name: z.string(),
     full_name: z.string(),
     clone_url: z.string(),
-    temp_clone_token: z.string(),
   }),
   installation: z.object({
     id: z.number(),
