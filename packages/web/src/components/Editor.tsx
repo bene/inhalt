@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from "react";
 
 import { useSections } from "../hooks/useSectionts";
 import { AddSectionTool } from "./AddSectionTool";
-import PropsEditorPanel from "./PropsEditorPanel";
+import { PropsEditorPanel } from "./PropsEditorPanel";
 
-const page = {
-  id: "45d05b20-8651-42e5-b41d-3b7cd533d73c",
-  slug: "index",
+type EditorProps = {
+  page: {
+    id: string;
+    slug: string;
+  };
 };
 
-export function Editor() {
+export function Editor({ page }: EditorProps) {
   const sections = useSections();
 
   // State

@@ -26,7 +26,6 @@ export type Config = z.infer<typeof configValidator>;
 export const propsSchemaValidator = z
   .record(
     z.object({
-      name: z.string(),
       type: z.string(),
       required: z.boolean(),
       default: z.any(),

@@ -1,20 +1,24 @@
+import { trpcServer } from "@hono/trpc-server";
 import {
-  RealtimeMessage,
   msgUpdateComponents,
   msgUpdatePage,
   realtimeMessage,
+  type RealtimeMessage,
 } from "@inhalt/schema";
 import { Prisma } from "@prisma/client";
 import { Hono } from "hono";
 import { createBunWebSocket } from "hono/bun";
 import { cors } from "hono/cors";
 import { validator } from "hono/validator";
-import { WSContext } from "hono/ws";
-
+import type { WSContext } from "hono/ws";
 import { z } from "zod";
+
 import { getAccessToken } from "./github/auth";
 import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
+import { componentsRouter } from "./routers/components";
+import { router } from "./trpc";
+import { pagesRouter } from "./routers/pages";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 const app = new Hono();
@@ -282,6 +286,20 @@ app.get(
         webSocketConnections.delete(connectionId);
       },
     };
+  })
+);
+
+export const appRouter = router({
+  components: componentsRouter,
+  pages: pagesRouter,
+});
+
+export type AppRouter = typeof appRouter;
+
+app.use(
+  "/trpc/*",
+  trpcServer({
+    router: appRouter,
   })
 );
 

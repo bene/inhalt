@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useLoaderData } from "@tanstack/react-router";
 import { Fragment } from "react";
 
 type PropsEditorPanelProps = {
@@ -9,12 +10,21 @@ type PropsEditorPanelProps = {
   setIsOpen: (open: boolean) => void;
 };
 
-export default function PropsEditorPanel({
-  pageId,
+export function PropsEditorPanel({
   sectionId,
   isOpen,
   setIsOpen,
 }: PropsEditorPanelProps) {
+  const { page, components } = useLoaderData({ from: "/page/$pageId" });
+  const section = page.sections.find((section) => section.id === sectionId);
+  const component = components.find(
+    (component) => component.name === section?.componentName
+  );
+
+  if (!section || !component) {
+    return null;
+  }
+
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-30" onClose={setIsOpen}>
@@ -47,7 +57,7 @@ export default function PropsEditorPanel({
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                          Panel title
+                          {section.componentName}
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -63,8 +73,33 @@ export default function PropsEditorPanel({
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      <p>{pageId}</p>
-                      <p>{sectionId}</p>
+                      {component.propsSchema ? (
+                        Object.entries(component.propsSchema).map(
+                          ([name, value]) => (
+                            <div key={name} className="mb-4">
+                              <label
+                                htmlFor={name}
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                {name}
+                              </label>
+                              <input
+                                id={name}
+                                required={value.required}
+                                type="text"
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-900 focus:border-pink-900 sm:text-sm"
+                              />
+                            </div>
+                          )
+                        )
+                      ) : (
+                        <div className="rounded border border-dashed flex items-center justify-center min-h-40">
+                          <div className="p-4 text-center text-gray-500">
+                            <span className="font-bold">{component.name}</span>{" "}
+                            has no editable props.
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Dialog.Panel>
