@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
+import {
+  AdjustmentsHorizontalIcon,
+  ArrowLeftIcon,
+  ChatBubbleBottomCenterIcon,
+} from "@heroicons/react/24/outline";
+import { Link } from "@tanstack/react-router";
 import { useSections } from "../hooks/useSectionts";
 import { AddSectionTool } from "./AddSectionTool";
 import { PropsEditorPanel } from "./PropsEditorPanel";
@@ -98,45 +104,47 @@ export function Editor({ page }: EditorProps) {
         />
       )}
 
-      <div className="w-[100dvw] h-[100dvh] flex flex-col bg-gray-50">
-        <div className="h-12 flex p-4 items-center justify-between">
-          <p className="font-bold text-lg">Home</p>
-          <button className="bg-black rounded-lg shadow px-3 py-1 text-white">
-            Save
-          </button>
+      <div className="fixed inset-x-0 top-0 flex justify-center z-30">
+        <div className="group -translate-y-[calc(50%+16px)] hover:translate-y-0 pt-4 transition-transform">
+          <div className="py-3 px-6 gap-6 bg-black rounded-full shadow-md flex justify-center items-center">
+            <Link to="/">
+              <ArrowLeftIcon className="h-6 w-6 transition-colors group-hover:text-white" />
+            </Link>
+
+            <ChatBubbleBottomCenterIcon className="h-6 w-6 transition-colors group-hover:text-white" />
+            <AdjustmentsHorizontalIcon className="h-6 w-6 transition-colors group-hover:text-white" />
+          </div>
+        </div>
+      </div>
+
+      <div className="relative w-[100dvw] h-[100dvh] flex flex-col bg-gray-50">
+        <div className="absolute inset-0 z-10 bg-transparent flex">
+          <div
+            ref={indicatorEl}
+            className="absolute z-10 border-2 border-dashed border-pink-800 bg-opacity-10 bg-pink-800 hover:cursor-pointer"
+            onClick={() => setIsPropsEditorOpen(true)}
+          />
+
+          <div
+            ref={addSectionToolEl}
+            className="absolute inset-x-0 w-screen h-0 z-20"
+          >
+            <AddSectionTool
+              isOpen={isToolOpen}
+              setIsOpen={setIsToolOpen}
+              insertIndex={insertIndex}
+              pageId={page.id}
+              showAlways
+            />
+          </div>
         </div>
 
-        <div className="flex-1 px-4 pb-4">
-          <div className="relative overflow-hidden rounded-xl shadow-xl w-full h-full bg-white">
-            <div className="absolute inset-0 z-10 bg-transparent flex">
-              <div
-                ref={indicatorEl}
-                className="absolute z-10 border-2 border-dashed border-pink-800 rounded-xl bg-opacity-10 bg-pink-800 hover:cursor-pointer"
-                onClick={() => setIsPropsEditorOpen(true)}
-              />
-
-              <div
-                ref={addSectionToolEl}
-                className="absolute inset-x-0 w-screen h-0 z-20"
-              >
-                <AddSectionTool
-                  isOpen={isToolOpen}
-                  setIsOpen={setIsToolOpen}
-                  insertIndex={insertIndex}
-                  pageId={page.id}
-                  showAlways
-                />
-              </div>
-            </div>
-
-            <div className="absolute inset-0">
-              <iframe
-                ref={iframeEl}
-                src={`http://localhost:4321/${page.slug === "index" ? "" : page.slug}`}
-                className="w-full h-full"
-              />
-            </div>
-          </div>
+        <div className="absolute inset-0">
+          <iframe
+            ref={iframeEl}
+            src={`http://localhost:4321/${page.slug === "index" ? "" : page.slug}`}
+            className="w-full h-full"
+          />
         </div>
       </div>
     </>
