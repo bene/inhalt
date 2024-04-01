@@ -3,6 +3,8 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@tanstack/react-router";
 import { Fragment } from "react";
 
+import { getHumanTypeName } from "../utils";
+
 type PropsEditorPanelProps = {
   pageId: string;
   sectionId: string;
@@ -88,6 +90,7 @@ export function PropsEditorPanel({
                                 required={value.required}
                                 type="text"
                                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-900 focus:border-pink-900 sm:text-sm"
+                                placeholder={getHumanTypeName(value.type)}
                               />
                             </div>
                           )

@@ -23,15 +23,25 @@ export const configValidator = configInputValidator.transform((config) => {
 
 export type Config = z.infer<typeof configValidator>;
 
+export const propTypeValidator = z.union([
+  z.literal("string"),
+  z.literal("number"),
+  z.literal("boolean"),
+]);
+
+export type PropType = z.infer<typeof propTypeValidator>;
+
 export const propsSchemaValidator = z
   .record(
     z.object({
-      type: z.string(),
+      type: propTypeValidator,
       required: z.boolean(),
       default: z.any(),
     })
   )
   .nullable();
+
+export type PropsSchema = z.infer<typeof propsSchemaValidator>;
 
 export const propsValidator = z.record(z.unknown()).nullable();
 
