@@ -13,13 +13,9 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
   // Send via postMessage to the parent window (editor)
   // Editor can use this to calculate position of tools (insert button etc.)
   const [rect, setRect] = useState<Omit<DOMRect, "toJSON"> | null>(null);
+  const [section, setSection] = useState<Element | null>(null);
 
-  useEffect(() => {
-    if (!elRef.current) {
-      return;
-    }
-
-    const section = elRef.current.parentElement?.nextElementSibling;
+  useEffect(()=>{
     if (!section) {
       return;
     }
@@ -57,12 +53,24 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
     const resizeObserver = new ResizeObserver(onChange);
     resizeObserver.observe(section);
 
-    document.addEventListener("scroll", onChange);
+     document.addEventListener("scroll", onChange);
 
     return () => {
       resizeObserver.disconnect();
       document.removeEventListener("scroll", onChange);
     };
+  },[section])
+
+  useEffect(() => {
+    if (!elRef.current) {
+      return;
+    }
+
+    const section = elRef.current.parentElement?.nextElementSibling;
+    if (section) {
+      setSection(section);
+    }
+    
   }, [elRef.current]);
 
   useEffect(() => {
@@ -81,5 +89,5 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
     );
   }, [rect]);
 
-  return <div ref={elRef} className="hidden" />;
+  return !section? <div ref={elRef} className="hidden" />:null;
 }

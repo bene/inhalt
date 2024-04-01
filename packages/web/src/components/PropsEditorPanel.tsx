@@ -76,25 +76,24 @@ export function PropsEditorPanel({
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
                       {component.propsSchema ? (
-                        Object.entries(component.propsSchema).map(
-                          ([name, value]) => (
-                            <div key={name} className="mb-4">
-                              <label
-                                htmlFor={name}
-                                className="block text-sm font-medium text-gray-700"
-                              >
-                                {name}
-                              </label>
-                              <input
-                                id={name}
-                                required={value.required}
-                                type="text"
-                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-900 focus:border-pink-900 sm:text-sm"
-                                placeholder={getHumanTypeName(value.type)}
-                              />
-                            </div>
-                          )
-                        )
+                        <div className="flex flex-col gap-4">
+                          {Object.entries(component.propsSchema).map(
+                            ([name, value]) => (
+                              <div key={name}>
+                                <label htmlFor={name} className="text-gray-500">
+                                  {name}
+                                </label>
+                                <input
+                                  id={name}
+                                  required={value.required}
+                                  type="text"
+                                  className="mt-1 w-full border-gray-200 rounded-md focus:ring-pink-800 focus:border-pink-800"
+                                  placeholder={getHumanTypeName(value.type)}
+                                />
+                              </div>
+                            )
+                          )}
+                        </div>
                       ) : (
                         <div className="rounded border border-dashed flex items-center justify-center min-h-40">
                           <div className="p-4 text-center text-gray-500">
