@@ -15,7 +15,7 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
   const [rect, setRect] = useState<Omit<DOMRect, "toJSON"> | null>(null);
   const [section, setSection] = useState<Element | null>(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!section) {
       return;
     }
@@ -53,13 +53,13 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
     const resizeObserver = new ResizeObserver(onChange);
     resizeObserver.observe(section);
 
-     document.addEventListener("scroll", onChange);
+    document.addEventListener("scroll", onChange);
 
     return () => {
       resizeObserver.disconnect();
       document.removeEventListener("scroll", onChange);
     };
-  },[section])
+  }, [section]);
 
   useEffect(() => {
     if (!elRef.current) {
@@ -70,7 +70,6 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
     if (section) {
       setSection(section);
     }
-    
   }, [elRef.current]);
 
   useEffect(() => {
@@ -89,5 +88,5 @@ export function SectionMarker({ sectionId, sectionOrder }: SectionMarkerProps) {
     );
   }, [rect]);
 
-  return !section? <div ref={elRef} className="hidden" />:null;
+  return section ? null : <div ref={elRef} className="hidden" />;
 }
