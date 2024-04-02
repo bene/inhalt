@@ -16,8 +16,8 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "oven/bun:1",
-        entrypoint: "bun",
-        args: ["install", "--frozen-lock-file"],
+        entrypoint: "sh",
+        args: ["ls"],
       },
       {
         name: "gcr.io/cloud-builders/docker",
