@@ -11,8 +11,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
   const body = {
     steps: [
       {
-        name: "gcr.io/cloud-builders/gsutil",
-        entrypoint: "git",
+        name: "gcr.io/cloud-builders/git",
         args: ["clone", cloneUrl, "/workspace"],
       },
       {
@@ -21,6 +20,9 @@ export async function triggerCloudBuild(cloneUrl: string) {
         args: ["install", "--frozen-lock-file"],
       },
     ],
+    artifacts: {
+      images: ["bun"],
+    },
   };
 
   const res = await client.request({
