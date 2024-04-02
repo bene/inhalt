@@ -16,15 +16,21 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "oven/bun:1",
-        entrypoint: "bun",
         args: ["install", "--frozen-lock-file"],
+      },
+      {
+        name: "gcr.io/cloud-builders/wget",
+        args: [
+          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/00ccc05e810b1fd28c07b3e94efb331fcd87b728/Dockerfile",
+        ],
       },
       {
         name: "gcr.io/cloud-builders/docker",
         args: [
-          "commit",
-          "step_2",
+          "build",
+          "-t",
           "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
+          ".",
         ],
       },
     ],
