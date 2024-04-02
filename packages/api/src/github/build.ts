@@ -16,9 +16,8 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "oven/bun:1",
-        // entrypoint: "bun",
-        // args: ["install", "--frozen-lock-file"],
-        script: "echo 'Hello, World!' && pwd && ls",
+        entrypoint: "bun",
+        args: ["install", "--frozen-lock-file"],
       },
       {
         name: "gcr.io/cloud-builders/wget",
