@@ -22,18 +22,18 @@ export async function triggerCloudBuild(cloneUrl: string) {
       {
         name: "gcr.io/cloud-builders/wget",
         args: [
-          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/627e2943ec297d1e1acce6911f4d509bc582707a/Dockerfile",
+          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/2c0f73bebc7430cbabe43877d84eef81731dde7c/Dockerfile",
         ],
       },
       {
         name: "gcr.io/cloud-builders/docker",
-        // args: [
-        //   "build",
-        //   "-t",
-        //   "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
-        //   ".",
-        // ],
-        script: `echo "--" && pwd && ls`,
+        args: [
+          "build",
+          "-t",
+          "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
+          ".",
+        ],
+        // script: `echo "--" && pwd && ls`,
       },
     ],
     artifacts: {
