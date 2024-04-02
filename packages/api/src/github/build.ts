@@ -12,12 +12,17 @@ export async function triggerCloudBuild(cloneUrl: string) {
     steps: [
       {
         name: "gcr.io/cloud-builders/git",
-        args: ["clone", cloneUrl, "/home/bun/app"],
+        args: ["clone", cloneUrl, "/workspace"],
       },
       {
         name: "oven/bun:1",
         entrypoint: "bun",
-        args: ["run", "ls.ts"],
+        args: ["install", "--frozen-lock-file"],
+      },
+      {
+        name: "oven/bun:1",
+        entrypoint: "bun",
+        args: ["ls.ts"],
       },
       {
         name: "gcr.io/cloud-builders/docker",
