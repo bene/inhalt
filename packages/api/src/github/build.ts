@@ -21,7 +21,12 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "gcr.io/cloud-builders/docker",
-        args: ["image", "tag", "oven/bun:1", "project1:latest"],
+        args: [
+          "image",
+          "tag",
+          "oven/bun:1",
+          "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
+        ],
       },
     ],
     artifacts: {
