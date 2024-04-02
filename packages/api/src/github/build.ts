@@ -21,7 +21,11 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "gcr.io/cloud-builders/docker",
-        args: ["ps", "-a"],
+        args: [
+          "commit",
+          "step_2",
+          "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
+        ],
       },
     ],
     artifacts: {
