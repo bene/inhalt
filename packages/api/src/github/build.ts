@@ -21,7 +21,9 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
     ],
     artifacts: {
-      images: ["bun"],
+      images: [
+        "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:$SHORT_SHA",
+      ],
     },
   };
 
