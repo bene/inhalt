@@ -1,13 +1,16 @@
 ---
 interface Props {
-  text: string;
+  text?: string;
 }
 
 const { text } = Astro.props;
 ---
 
-<p
-  class="font-bold bg-blue-100 text-blue-900 w-full m-4 p-12 text-xl rounded-xl shadow-lg"
->
-  Kontakt
-</p>
+<div class="m-4">
+  <div
+    class="p-12 text-xl rounded-xl shadow-lg font-bold bg-blue-100 text-blue-900 w-full"
+  >
+    Kontakt
+    <p>{text}</p>
+  </div>
+</div>
