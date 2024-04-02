@@ -7,7 +7,7 @@ RUN bunx astro preferences disable devToolbar
 
 EXPOSE 4321
 
-ENTRYPOINT ["bunx", "--bun", "astro", "dev", "--port", "4321"]`;
+ENTRYPOINT ["bunx", "--bun", "astro", "dev", "--port", "4321", "--host", "0.0.0.0"]`;
 
 export async function triggerCloudBuild(cloneUrl: string) {
   const auth = new GoogleAuth({
