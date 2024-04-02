@@ -3,5 +3,8 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "overrides": {
+    "sharp": "0.33.3"
+  }
 }
