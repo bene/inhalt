@@ -22,7 +22,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
       {
         name: "gcr.io/cloud-builders/wget",
         args: [
-          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/b9b3e1fb0b5fca1e347703d76c4dc7934e8d10ca/Dockerfile",
+          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/30de15d1aff9c0258d57f810cfffb58c30d8c31e/Dockerfile",
         ],
       },
       {
