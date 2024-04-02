@@ -12,7 +12,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
     steps: [
       {
         name: "gcr.io/cloud-builders/git",
-        args: ["clone", cloneUrl, "/workspace"],
+        args: ["clone", cloneUrl, "/home/bun/app"],
       },
       {
         name: "oven/bun:1",
