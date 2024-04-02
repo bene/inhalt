@@ -22,7 +22,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
         args: ["install", "--frozen-lock-file"],
       },
       {
-        name: "gcr.io/cloud-builders/curl",
+        name: "busybox",
         script: `echo "${dockerfileSource}" > Dockerfile`,
       },
       {
