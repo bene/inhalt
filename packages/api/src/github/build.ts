@@ -17,7 +17,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
       {
         name: "oven/bun:1",
         entrypoint: "bun",
-        args: ["ls.ts"],
+        args: ["run", "ls.ts"],
       },
       {
         name: "gcr.io/cloud-builders/docker",
