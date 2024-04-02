@@ -1,5 +1,7 @@
 import { GoogleAuth } from "google-auth-library";
 
+const dockerfileSource = `FROM oven/bun:1\nCOPY . .`;
+
 export async function triggerCloudBuild(cloneUrl: string) {
   const auth = new GoogleAuth({
     keyFilename: "google-cloud-credentials.json",
@@ -20,10 +22,8 @@ export async function triggerCloudBuild(cloneUrl: string) {
         args: ["install", "--frozen-lock-file"],
       },
       {
-        name: "gcr.io/cloud-builders/wget",
-        args: [
-          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/30de15d1aff9c0258d57f810cfffb58c30d8c31e/Dockerfile",
-        ],
+        name: "gcr.io/cloud-builders/curl",
+        script: `echo "${dockerfileSource}" > Dockerfile`,
       },
       {
         name: "gcr.io/cloud-builders/docker",
@@ -33,7 +33,6 @@ export async function triggerCloudBuild(cloneUrl: string) {
           "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
           ".",
         ],
-        // script: `echo "--" && pwd && ls`,
       },
     ],
     artifacts: {
