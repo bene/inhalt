@@ -20,7 +20,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
         args: ["install", "--frozen-lock-file"],
       },
       {
-        name: "gcr.io/cloud-builders/git",
+        name: "gcr.io/cloud-builders/docker",
         args: ["ps", "-a"],
       },
     ],
