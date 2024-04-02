@@ -70,11 +70,11 @@ export async function generateComponentsFile(
   });
 
   let sectionsFileSource = components
-    .map((c) => `import ${c.name} from "${c.path}"`)
+    .map((c) => `import ${c.name} from "${c.path}";`)
     .join("\n");
-  sectionsFileSource += `\n\nexport default {${components
+  sectionsFileSource += `\n\nexport default { ${components
     .map((c) => c.name)
-    .join(", ")}}`;
+    .join(", ")} };`;
 
   // Save to node_modules/inhalt a la prisma client
   await writeFile(
