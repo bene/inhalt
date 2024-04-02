@@ -2,7 +2,7 @@ import { GoogleAuth } from "google-auth-library";
 
 const dockerfileSource = `FROM oven/bun:1
 COPY . .
-CMD ["bunx", "astro", "dev"]`;
+ENTRYPOINT ["bunx", "astro", "dev"]`;
 
 export async function triggerCloudBuild(cloneUrl: string) {
   const auth = new GoogleAuth({
@@ -25,7 +25,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "busybox",
-        script: `echo "${dockerfileSource}" > Dockerfile`,
+        script: `echo '${dockerfileSource}' > Dockerfile`,
       },
       {
         name: "gcr.io/cloud-builders/docker",
