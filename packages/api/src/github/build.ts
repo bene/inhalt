@@ -12,18 +12,17 @@ export async function triggerCloudBuild(cloneUrl: string) {
     steps: [
       {
         name: "gcr.io/cloud-builders/git",
-        args: ["clone", cloneUrl, "/home/bun/app"],
+        args: ["clone", cloneUrl, "/workspace"],
       },
       {
         name: "oven/bun:1",
-        // entrypoint: "bun",
-        // args: ["install", "--frozen-lock-file"],
-        script: 'echo "--" && pwd && ls',
+        entrypoint: "bun",
+        args: ["install", "--frozen-lock-file"],
       },
       {
         name: "gcr.io/cloud-builders/wget",
         args: [
-          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/c436934d5dde4218288b05ca46ab1b5289b334db/Dockerfile",
+          "https://gist.githubusercontent.com/bene/7496c2849bc2c118d63abd1db04f88a7/raw/59e8d41b240b5e2d13ed1b2dd319335670c9be64/Dockerfile",
         ],
       },
       {
