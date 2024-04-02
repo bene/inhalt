@@ -1,5 +1,6 @@
 {
   "name": "@inhalt/astro",
+  "version": "0.0.1",
   "type": "module",
   "main": "src/index.ts",
   "bin": {
@@ -11,7 +12,9 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "astro": "^4.5.13",
+    "@types/bun": "latest",
+    "vite": "^5.2.7"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
