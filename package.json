@@ -1,6 +1,9 @@
 {
   "name": "@inhalt/mono",
   "private": true,
+  "scripts": {
+    "list": "bun --bun ls.ts"
+  },
   "workspaces": [
     "packages/*"
   ],
