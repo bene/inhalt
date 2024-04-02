@@ -1,11 +1,6 @@
-import {
-  componentValidator,
-  type Component,
-  type UpdatePageMessage,
-} from "@inhalt/schema";
+import { type UpdatePageMessage } from "@inhalt/schema";
+import { useLoaderData } from "@tanstack/react-router";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
-import { z } from "zod";
 
 type AddSectionToolProps = {
   showAlways?: boolean;
@@ -22,25 +17,7 @@ export function AddSectionTool({
   isOpen,
   setIsOpen,
 }: AddSectionToolProps) {
-  const [components, setComponents] = useState<Component[]>([]);
-
-  useEffect(() => {
-    const ac = new AbortController();
-
-    const fetchComponentNames = async () => {
-      const res = await fetch("http://localhost:3000/components", {
-        signal: ac.signal,
-      });
-      const raw = await res.json();
-      const components = z.array(componentValidator).parse(raw);
-
-      setComponents(components);
-    };
-
-    fetchComponentNames();
-
-    return () => ac.abort();
-  }, []);
+  const { components } = useLoaderData({ from: "/page/$pageId" });
 
   return (
     <>

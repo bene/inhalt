@@ -13,7 +13,7 @@ export function useSections() {
   );
 
   useEffect(() => {
-    window.onmessage = (e) => {
+    const onMessage = (e: MessageEvent) => {
       const res = realtimeMessage.safeParse(e.data);
       if (!res.success) {
         return;
@@ -32,6 +32,9 @@ export function useSections() {
         });
       }
     };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
   }, []);
 
   return sections;

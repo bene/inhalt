@@ -1,0 +1,22 @@
+---
+type Props = {
+  id: string;
+  order: number;
+};
+
+const props = Astro.props;
+---
+
+<inhalt-block {...props}>
+  <slot />
+</inhalt-block>
+
+<style is:global>
+  body {
+    pointer-events: none;
+  }
+
+  inhalt-block {
+    display: contents;
+  }
+</style>

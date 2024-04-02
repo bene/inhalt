@@ -115,11 +115,29 @@ export const msgRectChange = z.object({
 
 export type RectChangeMessage = z.infer<typeof msgRectChange>;
 
+export const msgMouseMove = z.object({
+  kind: z.literal("mouse:move"),
+  x: z.number(),
+  y: z.number(),
+});
+
+export type MouseMoveMessage = z.infer<typeof msgMouseMove>;
+
+export const msgMouseClick = z.object({
+  kind: z.literal("mouse:click"),
+  x: z.number(),
+  y: z.number(),
+});
+
+export type MouseClickMessage = z.infer<typeof msgMouseClick>;
+
 export const realtimeMessage = z.union([
   msgUpdateComponents,
   msgUpdatePage,
   msgHmrReload,
   msgRectChange,
+  msgMouseMove,
+  msgMouseClick,
 ]);
 
 export type RealtimeMessage = z.infer<typeof realtimeMessage>;
