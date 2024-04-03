@@ -1,0 +1,25 @@
+# kubectl create secret docker-registry artifact-registry --docker-server=us-central1-docker.pkg.dev --docker-email=kuber-896@sandbox-bene.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat serviceaccount.json)"
+# kubectl expose deployment/project1 --type="LoadBalancer" --port 4321
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project1
+  labels:
+    app: project1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project1
+  template:
+    metadata:
+      labels:
+        app: project1
+    spec:
+      containers:
+        - name: project1
+          image: us-central1-docker.pkg.dev/sandbox-bene/preview/project1:latest
+          ports:
+            - containerPort: 4321
+      imagePullSecrets:
+        - name: artifact-registry
