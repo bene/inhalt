@@ -98,14 +98,11 @@ export function Editor({ page }: EditorProps) {
 
   return (
     <>
-      {hoveredSectionId && (
-        <PropsEditorPanel
-          pageId={page.id}
-          sectionId={hoveredSectionId}
-          isOpen={isPropsEditorOpen}
-          setIsOpen={setIsPropsEditorOpen}
-        />
-      )}
+      <PropsEditorPanel
+        sectionId={hoveredSectionId}
+        isOpen={isPropsEditorOpen}
+        setIsOpen={setIsPropsEditorOpen}
+      />
 
       <div className="fixed inset-x-0 top-0 flex justify-center z-30">
         <div className="group -translate-y-[calc(50%+16px)] hover:translate-y-0 pt-4 transition-transform">
@@ -128,7 +125,7 @@ export function Editor({ page }: EditorProps) {
 
         <div
           ref={addSectionToolEl}
-          className="absolute inset-x-0 w-screen h-0 z-20"
+          className="absolute inset-x-0 flex justify-center items-center w-screen h-0 z-20"
         >
           <AddSectionTool
             isOpen={isToolOpen}

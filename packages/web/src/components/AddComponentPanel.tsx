@@ -3,28 +3,16 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@tanstack/react-router";
 import { Fragment } from "react";
 
-import { getHumanTypeName } from "../utils";
-
-type PropsEditorPanelProps = {
-  sectionId: string | null;
+type AddComponentPanelProps = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 };
 
-export function PropsEditorPanel({
-  sectionId,
+export function AddComponentPanel({
   isOpen,
   setIsOpen,
-}: PropsEditorPanelProps) {
-  const { page, components } = useLoaderData({ from: "/page/$pageId" });
-  const section = page.sections.find((section) => section.id === sectionId);
-  const component = components.find(
-    (component) => component.name === section?.componentName
-  );
-
-  if (!section || !component) {
-    return null;
-  }
+}: AddComponentPanelProps) {
+  const { components } = useLoaderData({ from: "/page/$pageId" });
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -58,7 +46,7 @@ export function PropsEditorPanel({
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                          {section.componentName}
+                          Select a component to add
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -74,33 +62,20 @@ export function PropsEditorPanel({
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      {component.propsSchema ? (
-                        <div className="flex flex-col gap-4">
-                          {Object.entries(component.propsSchema).map(
-                            ([name, value]) => (
-                              <div key={name}>
-                                <label htmlFor={name} className="text-gray-500">
-                                  {name}
-                                </label>
-                                <input
-                                  id={name}
-                                  required={value.required}
-                                  type="text"
-                                  className="mt-1 w-full border-gray-200 rounded-md focus:ring-pink-800 focus:border-pink-800"
-                                  placeholder={getHumanTypeName(value.type)}
-                                />
-                              </div>
-                            )
-                          )}
-                        </div>
-                      ) : (
-                        <div className="rounded border border-dashed flex items-center justify-center min-h-40">
-                          <div className="p-4 text-center text-gray-500">
-                            <span className="font-bold">{component.name}</span>{" "}
-                            has no editable props.
+                      <div className="grid grid-cols-3 gap-4">
+                        {components.map((component) => (
+                          <div key={component.name}>
+                            <button
+                              type="button"
+                              className="aspect-square border rounded w-full hover:border-gray-500"
+                            >
+                              <span className="font-bold">
+                                {component.name}
+                              </span>
+                            </button>
                           </div>
-                        </div>
-                      )}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </Dialog.Panel>
