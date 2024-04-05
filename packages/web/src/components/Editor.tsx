@@ -132,7 +132,6 @@ export function Editor({ page }: EditorProps) {
             setIsOpen={setIsToolOpen}
             insertIndex={insertIndex}
             pageId={page.id}
-            showAlways
           />
         </div>
 

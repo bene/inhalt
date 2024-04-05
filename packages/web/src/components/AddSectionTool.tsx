@@ -13,7 +13,7 @@ export function AddSectionTool({ isOpen, setIsOpen }: AddSectionToolProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="p-3 rounded-full bg-white"
+        className="p-3 rounded-full bg-white shadow"
       >
         <PlusIcon className="h-6 w-6 text-gray-500" />
       </button>

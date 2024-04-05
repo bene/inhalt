@@ -67,7 +67,7 @@ export function AddComponentPanel({
                           <div key={component.name}>
                             <button
                               type="button"
-                              className="aspect-square border rounded w-full hover:border-gray-500"
+                              className="aspect-square border-2 rounded-xl w-full hover:border-gray-500"
                             >
                               <span className="font-bold">
                                 {component.name}
