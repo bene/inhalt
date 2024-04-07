@@ -1,5 +1,6 @@
 import { configValidator } from "@inhalt/schema";
 import { readFile } from "fs/promises";
+import { join } from "path";
 import { z } from "zod";
 
 const migrateConfigValidator = z.object({
@@ -8,7 +9,10 @@ const migrateConfigValidator = z.object({
 type MigrateConfig = z.infer<typeof migrateConfigValidator>;
 
 export async function loadPluginConfig(migrateConfig: MigrateConfig) {
-  const raw = await readFile("pluginConfig.json", "utf-8");
+  const raw = await readFile(
+    join(migrateConfig.rootDir, "pluginConfig.json"),
+    "utf-8"
+  );
   const pluginConfig = configValidator.parse(raw);
 
   return pluginConfig;
