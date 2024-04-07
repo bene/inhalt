@@ -43,8 +43,10 @@ function updateRect(section: Section) {
   window.top?.postMessage(
     {
       kind: "rect:change",
-      sectionId: section.id,
-      order: section.order,
+      target: {
+        sectionId: section.id,
+        order: section.order,
+      },
       rect: rectWithMargin,
     } satisfies RectChangeMessage,
     "*"
@@ -60,6 +62,27 @@ const sections = Array.from(sectionWrappers)
     element: w.firstElementChild,
     order: parseInt(w.getAttribute("order")!),
   })) as Section[];
+
+// Get container
+const containerMarker = document.querySelector("inhalt-container-marker");
+if (!containerMarker) {
+  throw new Error("No inhalt-container found");
+}
+
+const container = containerMarker.parentElement;
+if (!container) {
+  throw new Error("No container found");
+}
+
+// Send initial container rect
+window.top?.postMessage(
+  {
+    kind: "rect:change",
+    target: "container",
+    rect: container.getBoundingClientRect(),
+  } satisfies RectChangeMessage,
+  "*"
+);
 
 // Send initial rects
 sections.forEach(updateRect);

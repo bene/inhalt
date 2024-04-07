@@ -21,12 +21,15 @@ export function useSections() {
 
       const msg = res.data;
 
-      if (msg.kind === "rect:change") {
+      if (msg.kind === "rect:change" && msg.target !== "container") {
         setSections((prev) => {
           const newRects = new Map(prev);
-          newRects.set(msg.sectionId, {
+          // https://github.com/colinhacks/zod/issues/2203
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          newRects.set((msg.target as any).sectionId, {
             rect: msg.rect,
-            order: msg.order,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            order: (msg.target as any).order,
           });
           return newRects;
         });

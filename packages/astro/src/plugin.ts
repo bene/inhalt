@@ -5,10 +5,14 @@ import EventEmitter from "events";
 import { writeFileSync } from "fs";
 import { join } from "path";
 import type { ViteDevServer } from "vite";
+import { z } from "zod";
+
+const inhaltEnvValidator = z
+  .union([z.literal("build_preview"), z.literal("preview")])
+  .optional();
 
 const emitter = new EventEmitter();
-const isPreviewBuildEnv =
-  import.meta.env.INHALT_ENV === "build_preview" ? true : false;
+const env = inhaltEnvValidator.parse(import.meta.env.INHALT_ENV);
 
 function connect(config: Config, server: ViteDevServer) {
   const ws = new WebSocket(`${config.wsUrl}realtime?kind=server`);
@@ -43,8 +47,7 @@ function connect(config: Config, server: ViteDevServer) {
 export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
   const config = configValidator.parse(configInput);
 
-  console.log("Env", import.meta.env.INHALT_ENV);
-  if (isPreviewBuildEnv) {
+  if (env === "build_preview") {
     writeFileSync("pluginConfig.json", JSON.stringify(config), "utf-8");
     process.exit(0);
   }
@@ -56,8 +59,11 @@ export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
         config: astroConfig,
         injectScript,
         injectRoute,
-        command,
+        updateConfig,
       }) => {
+        updateConfig({
+          resolvedInjectedRoutes: [],
+        } as any);
         await getComponents(config, astroConfig.root.pathname);
         await generateComponentsFile(
           config,
@@ -72,7 +78,7 @@ export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
         });
 
         // Inject messaging script when in dev mode
-        if (command === "dev") {
+        if (env === "preview") {
           const build = await Bun.build({
             entrypoints: [join(import.meta.dirname, "inject.ts")],
             minify: true,

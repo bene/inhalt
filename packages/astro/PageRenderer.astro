@@ -1,4 +1,5 @@
 ---
+import ContainerMarker from "./ContainerMarker.astro";
 import Wrapper from "./Wrapper.astro";
 import { getPage } from "./src/index";
 export { getStaticPaths } from "./src/getStaticPaths";
@@ -8,27 +9,27 @@ const components = componentsMod.default;
 
 const { slug } = Astro.params;
 const page = await getPage(slug);
-const isPreviewMode = import.meta.env.MODE === "development";
+const isPreviewMode = import.meta.env.INHALT_ENV === "preview";
 ---
 
+{isPreviewMode && <ContainerMarker />}
+
 {
-  page.sections.length >= 1
-    ? page.sections.map((section, index) => {
-        const Component = components[
-          section.componentName as keyof typeof components
-        ] as any;
+  page.sections.map((section, index) => {
+    const Component = components[
+      section.componentName as keyof typeof components
+    ] as any;
 
-        if (!Component && isPreviewMode) {
-          return <p>Component not found: {section.componentName}</p>;
-        }
+    if (!Component && isPreviewMode) {
+      return <p>Component not found: {section.componentName}</p>;
+    }
 
-        return isPreviewMode ? (
-          <Wrapper id={section.id} order={index}>
-            <Component {...(section.props as any)} />
-          </Wrapper>
-        ) : (
-          <Component {...(section.props as any)} />
-        );
-      })
-    : null
+    return isPreviewMode ? (
+      <Wrapper id={section.id} order={index}>
+        <Component {...(section.props as any)} />
+      </Wrapper>
+    ) : (
+      <Component {...(section.props as any)} />
+    );
+  })
 }

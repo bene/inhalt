@@ -99,8 +99,13 @@ export const msgHmrReload = z.object({
 
 export const msgRectChange = z.object({
   kind: z.literal("rect:change"),
-  sectionId: z.string(),
-  order: z.number(),
+  target: z.union([
+    z.literal("container"),
+    z.object({
+      sectionId: z.string(),
+      order: z.number(),
+    }),
+  ]),
   rect: z.object({
     x: z.number(),
     y: z.number(),
