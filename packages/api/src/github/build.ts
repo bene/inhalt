@@ -6,9 +6,10 @@ COPY . .
 FROM build as migrate
 
 ENV INHALT_ENV=build_preview
-ENV INHALT_ROOT_DIR=./example
+ENV INHALT_ROOT_DIR=./packages/example
 
-RUN bunx --bun astro dev
+
+RUN cd $INHALT_ROOT_DIR && bunx --bun astro dev
 RUN bunx inhalt-migrate
 
 
