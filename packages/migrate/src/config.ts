@@ -13,7 +13,7 @@ export async function loadPluginConfig(migrateConfig: MigrateConfig) {
     join(migrateConfig.rootDir, "pluginConfig.json"),
     "utf-8"
   );
-  const pluginConfig = configValidator.parse(raw);
+  const pluginConfig = configValidator.parse(JSON.parse(raw));
 
   return pluginConfig;
 }
