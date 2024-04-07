@@ -14,6 +14,7 @@ RUN bunx inhalt-migrate
 
 FROM build
 
+ENV INHALT_ENV=preview
 RUN bunx astro preferences disable devToolbar
 EXPOSE 4321
 ENTRYPOINT ["bunx", "--bun", "astro", "dev", "--port", "4321", "--host", "0.0.0.0"]`;

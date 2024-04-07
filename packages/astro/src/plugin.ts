@@ -43,6 +43,7 @@ function connect(config: Config, server: ViteDevServer) {
 export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
   const config = configValidator.parse(configInput);
 
+  console.log("Env", import.meta.env.INHALT_ENV);
   if (isPreviewBuildEnv) {
     writeFileSync("pluginConfig.json", JSON.stringify(config), "utf-8");
     process.exit(0);

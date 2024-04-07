@@ -11,7 +11,7 @@ export const trpc = createTRPCProxyClient<AppRouter>({
     httpBatchLink({
       url:
         "https://6880-178-165-195-140.ngrok-free.app/trpc" ??
-        `${pluginConfig.url}/trpc`,
+        `${pluginConfig.url}trpc`,
     }),
   ],
 });
