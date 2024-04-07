@@ -1,4 +1,8 @@
-import { type Config } from "@inhalt/schema";
+import {
+  propTypeValidator,
+  type Config,
+  type PropsSchema,
+} from "@inhalt/schema";
 import { readFile, readdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { Node, Project } from "ts-morph";
@@ -6,50 +10,61 @@ import { Node, Project } from "ts-morph";
 export async function getComponents(config: Config, rootPath: string) {
   const project = new Project({
     useInMemoryFileSystem: true,
-    compilerOptions: {
-      plugins: [{ name: "@astrojs/ts-plugin" }],
-    },
   });
 
-  const files = await readdir(config.sections);
-  const components = files.map(async (file) => {
-    let propsSchema = null;
-    const name = file.split(".astro")[0];
-    const path = join(rootPath, config.sections, file);
+  const files = await readdir(join(rootPath, config.sections));
+  const components = await Promise.all(
+    files.map(async (file) => {
+      let propsSchema = null;
+      const name = file.split(".astro")[0];
+      const path = join(rootPath, config.sections, file);
 
-    // Parse props
-    const sourceText = await readFile(
-      join(rootPath, config.sections, file),
-      "utf-8"
-    );
-    const source = project.createSourceFile(file, sourceText);
+      // Parse props
+      const sourceText = await readFile(
+        join(rootPath, config.sections, file),
+        "utf-8"
+      );
+      const source = project.createSourceFile(file, sourceText);
 
-    const propsInterface = source.getInterface("Props");
-    if (propsInterface) {
-      propsSchema = propsInterface.getProperties().map((prop) => ({
-        name: prop.getName(),
-        type: prop.getTypeNode()?.getText(),
-      }));
-    }
-
-    const propsTypeAlias = source.getTypeAlias("Props");
-    if (propsTypeAlias) {
-      const node = propsTypeAlias.getTypeNode();
-
-      if (Node.isTypeLiteral(node)) {
-        propsSchema = node.getProperties().map((props) => ({
-          name: props.getName(),
-          type: props.getTypeNode()?.getText(),
-        }));
+      const propsInterface = source.getInterface("Props");
+      if (propsInterface) {
+        propsSchema = propsInterface.getProperties().reduce(
+          (props, prop) => ({
+            ...props,
+            [prop.getName()]: {
+              type: propTypeValidator.parse(prop.getTypeNode()?.getText()),
+              required: false,
+            },
+          }),
+          {} as PropsSchema
+        );
       }
-    }
 
-    return {
-      name,
-      path,
-      propsSchema,
-    };
-  });
+      const propsTypeAlias = source.getTypeAlias("Props");
+      if (propsTypeAlias) {
+        const node = propsTypeAlias.getTypeNode();
+
+        if (Node.isTypeLiteral(node)) {
+          propsSchema = node.getProperties().reduce(
+            (props, prop) => ({
+              ...props,
+              [prop.getName()]: {
+                type: propTypeValidator.parse(prop.getTypeNode()?.getText()),
+                required: false,
+              },
+            }),
+            {} as PropsSchema
+          );
+        }
+      }
+
+      return {
+        name,
+        path,
+        propsSchema,
+      };
+    })
+  );
 
   return components;
 }

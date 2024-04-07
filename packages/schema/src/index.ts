@@ -36,7 +36,7 @@ export const propsSchemaValidator = z
     z.object({
       type: propTypeValidator,
       required: z.boolean(),
-      default: z.any(),
+      default: z.any().optional(),
     })
   )
   .nullable();

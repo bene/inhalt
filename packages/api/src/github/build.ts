@@ -1,12 +1,21 @@
 import { GoogleAuth } from "google-auth-library";
 
-const dockerfileSource = `FROM oven/bun:1
+const dockerfileSource = `FROM oven/bun:1 as build
 COPY . .
 
+FROM build as migrate
+
+ENV INHALT_ENV=build_preview
+ENV INHALT_ROOT_DIR=./example
+
+RUN bunx --bun astro dev
+RUN bunx inhalt-migrate
+
+
+FROM build
+
 RUN bunx astro preferences disable devToolbar
-
 EXPOSE 4321
-
 ENTRYPOINT ["bunx", "--bun", "astro", "dev", "--port", "4321", "--host", "0.0.0.0"]`;
 
 export async function triggerCloudBuild(cloneUrl: string) {

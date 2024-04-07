@@ -1,0 +1,19 @@
+{
+  "name": "@inhalt/migrate",
+  "bin": {
+    "inhalt-migrate": "src/index.ts"
+  },
+  "scripts": {
+    "dev": "INHALT_ROOT_DIR=../example bunx --bun inhalt-migrate"
+  },
+  "dependencies": {
+    "@inhalt/internal": "workspace:*",
+    "@inhalt/schema": "workspace:*",
+    "@trpc/client": "^10.45.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@inhalt/api": "workspace:*",
+    "@types/bun": "^1.0.12"
+  }
+}

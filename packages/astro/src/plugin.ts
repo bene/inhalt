@@ -2,10 +2,13 @@ import { generateComponentsFile, getComponents } from "@inhalt/internal";
 import { configValidator, type Config, type ConfigInput } from "@inhalt/schema";
 import type { AstroIntegration } from "astro";
 import EventEmitter from "events";
+import { writeFileSync } from "fs";
 import { join } from "path";
 import type { ViteDevServer } from "vite";
 
 const emitter = new EventEmitter();
+const isPreviewBuildEnv =
+  import.meta.env.INHALT_ENV === "build_preview" ? true : false;
 
 function connect(config: Config, server: ViteDevServer) {
   const ws = new WebSocket(`${config.wsUrl}realtime?kind=server`);
@@ -39,6 +42,11 @@ function connect(config: Config, server: ViteDevServer) {
 
 export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
   const config = configValidator.parse(configInput);
+
+  if (isPreviewBuildEnv) {
+    writeFileSync("pluginConfig.json", JSON.stringify(config), "utf-8");
+    process.exit(0);
+  }
 
   return {
     name: "@inhalt/astro",
