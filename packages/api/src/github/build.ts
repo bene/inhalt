@@ -52,12 +52,18 @@ export async function triggerCloudBuild(cloneUrl: string) {
           ".",
         ],
       },
+      {
+        name: "gcr.io/cloud-builders/docker",
+        args: [
+          "push",
+          "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
+        ],
+      },
+      {
+        name: "gcr.io/cloud-builders/curl",
+        script: `echo "Call webhook"`,
+      },
     ],
-    artifacts: {
-      images: [
-        "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
-      ],
-    },
   };
 
   const res = await client.request({
