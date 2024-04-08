@@ -2,6 +2,7 @@ import {
   AdjustmentsHorizontalIcon,
   ArrowLeftIcon,
   ChatBubbleBottomCenterIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
@@ -114,6 +115,7 @@ export function Editor({ page }: EditorProps) {
 
             <ChatBubbleBottomCenterIcon className="h-6 w-6 transition-colors group-hover:text-white" />
             <AdjustmentsHorizontalIcon className="h-6 w-6 transition-colors group-hover:text-white" />
+            <PlusIcon className="h-6 w-6 transition-colors group-hover:text-white" />
           </div>
         </div>
       </div>

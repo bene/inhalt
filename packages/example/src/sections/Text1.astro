@@ -1,6 +1,13 @@
 ---
-interface Props {
-  text: string;
+import type { With } from "@inhalt/astro";
+
+export interface Props {
+  text: With<
+    string,
+    {
+      label: "Hallo";
+    }
+  >;
 }
 
 const { text } = Astro.props;
