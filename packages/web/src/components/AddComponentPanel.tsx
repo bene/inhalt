@@ -80,31 +80,34 @@ export function AddComponentPanel({
                     </div>
 
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      {!selectedComponent && components.length !== 0 ? (
-                        <div className="grid grid-cols-3 gap-4">
-                          {components.map((component) => (
-                            <div key={component.name}>
-                              <button
-                                type="button"
-                                className="aspect-square border-2 rounded-xl w-full hover:border-gray-500"
-                                onClick={() => setSelectedComponent(component)}
-                              >
-                                <span className="font-bold">
-                                  {component.name}
-                                </span>
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="rounded border border-dashed flex items-center justify-center min-h-40">
-                          <div className="p-4 text-center text-gray-500">
-                            No Astro components in{" "}
-                            <span className="font-bold">sections folder</span>{" "}
-                            after last commit.
+                      {!selectedComponent &&
+                        (components.length !== 0 ? (
+                          <div className="grid grid-cols-3 gap-4">
+                            {components.map((component) => (
+                              <div key={component.name}>
+                                <button
+                                  type="button"
+                                  className="aspect-square border-2 rounded-xl w-full hover:border-gray-500"
+                                  onClick={() =>
+                                    setSelectedComponent(component)
+                                  }
+                                >
+                                  <span className="font-bold">
+                                    {component.name}
+                                  </span>
+                                </button>
+                              </div>
+                            ))}
                           </div>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="rounded border border-dashed flex items-center justify-center min-h-40">
+                            <div className="p-4 text-center text-gray-500">
+                              No Astro components in{" "}
+                              <span className="font-bold">sections folder</span>{" "}
+                              after last commit.
+                            </div>
+                          </div>
+                        ))}
 
                       {selectedComponent && (
                         <PropsEditor
