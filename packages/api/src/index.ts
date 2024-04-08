@@ -18,6 +18,7 @@ import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
 import { componentsRouter } from "./routers/components";
 import { pagesRouter } from "./routers/pages";
+import { projectsRouter } from "./routers/projects";
 import { router } from "./trpc";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
@@ -292,6 +293,7 @@ app.get(
 export const appRouter = router({
   components: componentsRouter,
   pages: pagesRouter,
+  projects: projectsRouter,
 });
 
 export type AppRouter = typeof appRouter;
