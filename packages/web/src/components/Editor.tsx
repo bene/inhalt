@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-
 import {
   AdjustmentsHorizontalIcon,
   ArrowLeftIcon,
   ChatBubbleBottomCenterIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 
 import { useContainer } from "../hooks/useContainer";
 import { useMouseClick } from "../hooks/useMouseClick";
@@ -124,40 +123,40 @@ export function Editor({ page }: EditorProps) {
         className="fixed z-10 border-2 border-dashed border-pink-800 bg-opacity-10 bg-pink-800 pointer-events-none"
       />
 
-      {sections.size === 0 && (
-        <div
-          className="z-20 fixed flex flex-col gap-4 justify-center items-center bg-pink-200 border-2 border-dashed border-pink-800 py-12"
-          style={{
-            top: container?.top,
-            left: container?.left,
-            width: container?.width,
-            height: container?.height || undefined,
-          }}
-        >
-          <AddSectionTool
-            isOpen={isToolOpen}
-            setIsOpen={setIsToolOpen}
-            insertIndex={insertIndex}
-            pageId={page.id}
-          />
-          <span className="text-2xl text-pink-800 max-w-xs text-center">
-            Add a first component to this page.
-          </span>
-        </div>
-      )}
-
       <div className="relative w-[100dvw] h-[100dvh]">
-        <div
-          ref={addSectionToolEl}
-          className="absolute inset-x-0 flex justify-center items-center w-screen h-0 z-20"
-        >
-          <AddSectionTool
-            isOpen={isToolOpen}
-            setIsOpen={setIsToolOpen}
-            insertIndex={insertIndex}
-            pageId={page.id}
-          />
-        </div>
+        {container && sections.size === 0 ? (
+          <div
+            className="z-20 fixed flex flex-col gap-4 justify-center items-center bg-pink-200 border-2 border-dashed border-pink-800 py-12"
+            style={{
+              top: container?.top,
+              left: container?.left,
+              width: container?.width,
+              height: container?.height || undefined,
+            }}
+          >
+            <AddSectionTool
+              isOpen={isToolOpen}
+              setIsOpen={setIsToolOpen}
+              insertIndex={insertIndex}
+              pageId={page.id}
+            />
+            <span className="text-xl text-pink-800 max-w-52 text-center">
+              Add a first component to this page.
+            </span>
+          </div>
+        ) : (
+          <div
+            ref={addSectionToolEl}
+            className="absolute inset-x-0 flex justify-center items-center w-screen h-0 z-20"
+          >
+            <AddSectionTool
+              isOpen={isToolOpen}
+              setIsOpen={setIsToolOpen}
+              insertIndex={insertIndex}
+              pageId={page.id}
+            />
+          </div>
+        )}
 
         <div className="absolute inset-0">
           <iframe

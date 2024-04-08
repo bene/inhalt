@@ -1,18 +1,26 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Component } from "@inhalt/schema";
 import { useLoaderData } from "@tanstack/react-router";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+
+import { PropsEditor } from "./PropsEditor";
 
 type AddComponentPanelProps = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  onSubmit: (component: Component, value: unknown) => void;
 };
 
 export function AddComponentPanel({
   isOpen,
   setIsOpen,
+  onSubmit,
 }: AddComponentPanelProps) {
   const { components } = useLoaderData({ from: "/page/$pageId" });
+  const [selectedComponent, setSelectedComponent] = useState<Component | null>(
+    null
+  );
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -46,7 +54,16 @@ export function AddComponentPanel({
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                          Select a component to add
+                          {selectedComponent ? (
+                            <>
+                              Add a{" "}
+                              <span className="text-pink-800">
+                                {selectedComponent.name}
+                              </span>
+                            </>
+                          ) : (
+                            "Select a component to add"
+                          )}
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -61,21 +78,41 @@ export function AddComponentPanel({
                         </div>
                       </div>
                     </div>
+
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      <div className="grid grid-cols-3 gap-4">
-                        {components.map((component) => (
-                          <div key={component.name}>
-                            <button
-                              type="button"
-                              className="aspect-square border-2 rounded-xl w-full hover:border-gray-500"
-                            >
-                              <span className="font-bold">
-                                {component.name}
-                              </span>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                      {!selectedComponent && (
+                        <div className="grid grid-cols-3 gap-4">
+                          {components.map((component) => (
+                            <div key={component.name}>
+                              <button
+                                type="button"
+                                className="aspect-square border-2 rounded-xl w-full hover:border-gray-500"
+                                onClick={() => setSelectedComponent(component)}
+                              >
+                                <span className="font-bold">
+                                  {component.name}
+                                </span>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {selectedComponent && (
+                        <PropsEditor
+                          component={selectedComponent}
+                          onSubmit={(value) =>
+                            onSubmit(selectedComponent, value)
+                          }
+                        >
+                          <button
+                            type="submit"
+                            className="bg-pink-400 text-pink-950 px-4 py-2 rounded-lg ml-auto"
+                          >
+                            Add
+                          </button>
+                        </PropsEditor>
+                      )}
                     </div>
                   </div>
                 </Dialog.Panel>

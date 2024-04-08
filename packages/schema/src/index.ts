@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { ZodSchema, z } from "zod";
 
 export const configInputValidator = z.object({
   url: z.union([
@@ -52,16 +52,18 @@ export const componentValidator = z.object({
 
 export type Component = z.infer<typeof componentValidator>;
 
+export const sectionValidator = z.object({
+  id: z.string(),
+  componentName: z.string(),
+  props: propsValidator,
+});
+
+export type Section = z.infer<typeof sectionValidator>;
+
 export const pageValidator = z.object({
   id: z.string(),
   slug: z.string(),
-  sections: z.array(
-    z.object({
-      id: z.string(),
-      componentName: z.string(),
-      props: propsValidator,
-    })
-  ),
+  sections: z.array(sectionValidator),
 });
 
 export const pagesValidator = z.array(
@@ -146,3 +148,31 @@ export const realtimeMessage = z.union([
 ]);
 
 export type RealtimeMessage = z.infer<typeof realtimeMessage>;
+
+export function validateProps(schema: PropsSchema, value: unknown) {
+  if (schema === null) {
+    return null;
+  }
+
+  const validator = z.object(
+    Object.entries(schema).reduce((props, [propName, prop]) => {
+      let propValidator: ZodSchema;
+
+      if (prop.type === "string") {
+        propValidator = z.string();
+      } else if (prop.type === "number") {
+        propValidator = z.number();
+      } else if (prop.type === "boolean") {
+        propValidator = z.boolean();
+      }
+
+      if (!prop.required) {
+        propValidator = propValidator!.nullable();
+      }
+
+      return { ...props, [propName]: propValidator! };
+    }, {})
+  );
+
+  return validator.parse(value);
+}

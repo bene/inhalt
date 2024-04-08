@@ -17,8 +17,8 @@ import { getAccessToken } from "./github/auth";
 import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
 import { componentsRouter } from "./routers/components";
-import { router } from "./trpc";
 import { pagesRouter } from "./routers/pages";
+import { router } from "./trpc";
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 const app = new Hono();
@@ -33,7 +33,7 @@ const webSocketConnections = new Map<
   Connection
 >();
 
-function broadcastRealtimeMessage(
+export function broadcastRealtimeMessage(
   msg: RealtimeMessage,
   {
     target,

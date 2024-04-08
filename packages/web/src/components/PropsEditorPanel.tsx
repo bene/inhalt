@@ -3,18 +3,20 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@tanstack/react-router";
 import { Fragment } from "react";
 
-import { getHumanTypeName } from "../utils";
+import { PropsEditor } from "./PropsEditor";
 
 type PropsEditorPanelProps = {
   sectionId: string | null;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  onSubmit: (value: unknown) => void;
 };
 
 export function PropsEditorPanel({
   sectionId,
   isOpen,
   setIsOpen,
+  onSubmit,
 }: PropsEditorPanelProps) {
   const { page, components } = useLoaderData({ from: "/page/$pageId" });
   const section = page.sections.find((section) => section.id === sectionId);
@@ -74,33 +76,7 @@ export function PropsEditorPanel({
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      {component.propsSchema ? (
-                        <div className="flex flex-col gap-4">
-                          {Object.entries(component.propsSchema).map(
-                            ([name, value]) => (
-                              <div key={name}>
-                                <label htmlFor={name} className="text-gray-500">
-                                  {name}
-                                </label>
-                                <input
-                                  id={name}
-                                  required={value.required}
-                                  type="text"
-                                  className="mt-1 w-full border-gray-200 rounded-md focus:ring-pink-800 focus:border-pink-800"
-                                  placeholder={getHumanTypeName(value.type)}
-                                />
-                              </div>
-                            )
-                          )}
-                        </div>
-                      ) : (
-                        <div className="rounded border border-dashed flex items-center justify-center min-h-40">
-                          <div className="p-4 text-center text-gray-500">
-                            <span className="font-bold">{component.name}</span>{" "}
-                            has no editable props.
-                          </div>
-                        </div>
-                      )}
+                      <PropsEditor component={component} onSubmit={onSubmit} />
                     </div>
                   </div>
                 </Dialog.Panel>

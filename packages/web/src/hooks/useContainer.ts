@@ -17,7 +17,6 @@ export function useContainer() {
 
       if (msg.kind === "rect:change" && msg.target === "container") {
         setContainer(msg.rect);
-        console.log("container", msg.rect);
       }
     };
 
