@@ -18,16 +18,11 @@ export const previewsRouter = router({
     .mutation(async ({ input }) => {}),
   update: publicProcedure
     .input(
-      z.union([
-        z.object({
-          buildId: z.string().uuid(),
-          status: previewBuildStatusValidator,
-        }),
-        z.object({
-          buildId: z.string().uuid(),
-          components: z.array(componentValidator),
-        }),
-      ])
+      z.object({
+        buildId: z.string().uuid(),
+        status: previewBuildStatusValidator.optional(),
+        components: z.array(componentValidator).optional(),
+      })
     )
     .mutation(async ({ input }) => {
       const { buildId } = input;
@@ -40,10 +35,13 @@ export const previewsRouter = router({
 
       await prisma.previewBuild.update({
         where: { id: buildId },
-        data: input,
+        data: {
+          status: input.status,
+          components: input.components,
+        },
       });
 
-      if (!("status" in input) || input.status !== "Successful") {
+      if (input.status !== "Successful") {
         return;
       }
 

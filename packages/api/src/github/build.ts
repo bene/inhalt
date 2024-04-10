@@ -81,7 +81,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
           "-X",
           "PATCH",
           "-H",
-          `Content-Type: application/json`,
+          `"Content-Type: application/json"`,
           `${config.publicUrl}builds/${build.id}`,
           "-d",
           `{ "status": "success" }`,
