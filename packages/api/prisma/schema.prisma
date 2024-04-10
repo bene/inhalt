@@ -10,7 +10,7 @@ datasource db {
 model PreviewBuild {
   id         String             @id @default(uuid()) @db.Uuid
   commitHash String
-  components Json[]
+  components Json?
   createdAt  DateTime           @default(now())
   finishedAt DateTime?
   status     PreviewBuildStatus @default(Running)

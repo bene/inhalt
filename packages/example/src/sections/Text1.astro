@@ -1,13 +1,6 @@
 ---
-import type { With } from "@inhalt/astro";
-
 export interface Props {
-  text: With<
-    string,
-    {
-      label: "Text";
-    }
-  >;
+  text: string;
 }
 
 const { text } = Astro.props;
