@@ -77,12 +77,13 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "gcr.io/cloud-builders/curl",
+        entrypoint: "curl",
         args: [
-          `"${config.publicUrl}builds/${build.id}"`,
+          `${config.publicUrl}builds/${build.id}`,
           "-X",
           "PATCH",
           "-H",
-          `"Content-Type: application/json"`,
+          `'Content-Type: application/json'`,
           "-d",
           `'{ "status": "Successful" }'`,
         ],
