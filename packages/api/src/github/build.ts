@@ -64,7 +64,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
         args: [
           "build",
           "-t",
-          `us-central1-docker.pkg.dev/$PROJECT_ID/previews/${project.name}:${build.id}`,
+          `${config.gcpArtifactRegistryUrl}${project.name}:${build.id}`,
           ".",
         ],
       },

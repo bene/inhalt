@@ -3,11 +3,11 @@ import { z } from "zod";
 const configValidator = z
   .object({
     PUBLIC_URL: z.string().url(),
-    GCP_ARTIFACT_REGISTRY_URL: z.string().url(),
+    GCP_ARTIFACT_REGISTRY_URL: z.string(),
   })
   .transform((config) => ({
     publicUrl: new URL(config.PUBLIC_URL),
-    gcpArtifactRegistryUrl: new URL(config.GCP_ARTIFACT_REGISTRY_URL),
+    gcpArtifactRegistryUrl: config.GCP_ARTIFACT_REGISTRY_URL,
   }));
 
 export const config = Object.freeze(
