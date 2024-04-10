@@ -38,6 +38,7 @@ export const previewsRouter = router({
         data: {
           status: input.status,
           components: input.components,
+          finishedAt: input.status ? new Date() : undefined,
         },
       });
 
