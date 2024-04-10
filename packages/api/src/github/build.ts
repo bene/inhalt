@@ -1,12 +1,16 @@
 import { GoogleAuth } from "google-auth-library";
+import { config } from "../config";
+import { prisma } from "../prisma";
 
-const dockerfileSource = `FROM oven/bun:1 as build
+function generateDockerfile(buildId: string) {
+  return `FROM oven/bun:1 as build
 COPY . .
 
 FROM build as migrate
 
 ENV INHALT_ENV=build_preview
 ENV INHALT_ROOT_DIR=./packages/example
+ENV INHALT_PREVIEW_BUILD_ID=${buildId}
 
 
 RUN cd $INHALT_ROOT_DIR && bunx --bun astro dev
@@ -19,6 +23,7 @@ ENV INHALT_ENV=preview
 RUN bunx astro preferences disable devToolbar
 EXPOSE 4321
 ENTRYPOINT ["bunx", "--bun", "astro", "dev", "--port", "4321", "--host", "0.0.0.0"]`;
+}
 
 export async function triggerCloudBuild(cloneUrl: string) {
   const auth = new GoogleAuth({
@@ -26,7 +31,18 @@ export async function triggerCloudBuild(cloneUrl: string) {
     scopes: "https://www.googleapis.com/auth/cloud-platform",
   });
   const client = await auth.getClient();
-  const projectId = await auth.getProjectId();
+  const gcpProjectId = await auth.getProjectId();
+
+  const project = {
+    id: "eb9b2f94-88f0-4531-9103-209baba21c93",
+    name: "hello-world",
+  };
+  const build = await prisma.previewBuild.create({
+    data: {
+      commitHash: "TODO",
+      projectId: project.id,
+    },
+  });
 
   const body = {
     steps: [
@@ -41,14 +57,14 @@ export async function triggerCloudBuild(cloneUrl: string) {
       },
       {
         name: "busybox",
-        script: `echo '${dockerfileSource}' > Dockerfile`,
+        script: `echo '${generateDockerfile(build.id)}' > Dockerfile`,
       },
       {
         name: "gcr.io/cloud-builders/docker",
         args: [
           "build",
           "-t",
-          "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
+          `us-central1-docker.pkg.dev/$PROJECT_ID/previews/${project.name}:${build.id}`,
           ".",
         ],
       },
@@ -56,18 +72,26 @@ export async function triggerCloudBuild(cloneUrl: string) {
         name: "gcr.io/cloud-builders/docker",
         args: [
           "push",
-          "us-central1-docker.pkg.dev/$PROJECT_ID/preview/project1:latest",
+          `us-central1-docker.pkg.dev/$PROJECT_ID/previews/${project.name}:${build.id}`,
         ],
       },
       {
         name: "gcr.io/cloud-builders/curl",
-        script: `echo "Call webhook"`,
+        args: [
+          "-X",
+          "PATCH",
+          "-H",
+          "Content-Type: application/json",
+          `${config.publicUrl}builds/${build.id}`,
+          "-d",
+          `{ "status": "success" }`,
+        ],
       },
     ],
   };
 
   const res = await client.request({
-    url: `https://cloudbuild.googleapis.com/v1/projects/${projectId}/locations/global/builds`,
+    url: `https://cloudbuild.googleapis.com/v1/projects/${gcpProjectId}/locations/global/builds`,
     method: "POST",
     body: JSON.stringify(body),
     headers: {

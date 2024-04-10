@@ -3,8 +3,12 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts"
   },
+  "prisma": {
+    "seed": "bun --bun run prisma/seed.ts"
+  },
   "dependencies": {
     "@inhalt/schema": "workspace:*",
+    "@kubernetes/client-node": "^0.20.0",
     "@prisma/client": "^5.11.0",
     "@trpc/server": "^10.45.2",
     "google-auth-library": "^9.7.0",

@@ -149,6 +149,14 @@ export const realtimeMessage = z.union([
 
 export type RealtimeMessage = z.infer<typeof realtimeMessage>;
 
+export const previewBuildStatusValidator = z.union([
+  z.literal("Running"),
+  z.literal("Failed"),
+  z.literal("Successful"),
+]);
+
+export type PreviewBuildStatus = z.infer<typeof previewBuildStatusValidator>;
+
 export function validateProps(schema: PropsSchema, value: unknown) {
   if (schema === null) {
     return null;

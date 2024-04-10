@@ -7,24 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Component {
-  name        String    @id
-  propsSchema Json?
-  sections    Section[]
+model PreviewBuild {
+  id         String             @id @default(uuid()) @db.Uuid
+  commitHash String
+  components Json[]
+  createdAt  DateTime           @default(now())
+  finishedAt DateTime?
+  status     PreviewBuildStatus @default(Running)
+  project    Project            @relation(fields: [projectId], references: [id])
+  projectId  String             @db.Uuid
+}
+
+enum PreviewBuildStatus {
+  Running
+  Failed
+  Successful
 }
 
 model Page {
-  id       String    @id @default(uuid()) @db.Uuid
-  slug     String    @unique
-  sections Section[]
+  id        String    @id @default(uuid()) @db.Uuid
+  slug      String    @unique
+  sections  Section[]
+  project   Project   @relation(fields: [projectId], references: [id])
+  projectId String    @db.Uuid
 }
 
 model Section {
-  id            String    @id @default(uuid()) @db.Uuid
-  page          Page      @relation(fields: [pageId], references: [id])
-  pageId        String    @db.Uuid
-  component     Component @relation(fields: [componentName], references: [name])
+  id            String @id @default(uuid()) @db.Uuid
+  page          Page   @relation(fields: [pageId], references: [id])
+  pageId        String @db.Uuid
   componentName String
   props         Json?
   order         Int
+}
+
+model Project {
+  id            String         @id @default(uuid()) @db.Uuid
+  name          String         @unique
+  gitRepo       GitRepo?
+  pages         Page[]
+  previewBuilds PreviewBuild[]
+}
+
+model GitRepo {
+  name        String
+  gitProvider GitProvider
+  project     Project     @relation(fields: [projectId], references: [id])
+  projectId   String      @id @db.Uuid
+}
+
+enum GitProvider {
+  GitHub
 }

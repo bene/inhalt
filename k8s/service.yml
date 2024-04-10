@@ -1,8 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
-  namespace: prod
+  name: project1
 spec:
-  type: ExternalName
-  externalName: project1.inhalt.bene.dev
+  selector:
+    app: project1
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 4321

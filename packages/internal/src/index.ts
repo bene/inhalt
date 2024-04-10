@@ -28,16 +28,35 @@ export async function getComponents(config: Config, rootPath: string) {
 
       const propsInterface = source.getInterface("Props");
       if (propsInterface) {
-        propsSchema = propsInterface.getProperties().reduce(
-          (props, prop) => ({
+        propsSchema = propsInterface.getProperties().reduce((props, prop) => {
+          const typeNode = prop.getTypeNode();
+
+          if (Node.isTypeReference(typeNode)) {
+            const typeName = typeNode.getTypeName();
+            if (Node.isIdentifier(typeName) && typeName.getText() === "With") {
+              const optionsTypeArgument = typeNode.getTypeArguments().at(1)!;
+
+              if (Node.isTypeLiteral(optionsTypeArgument)) {
+                const options = optionsTypeArgument
+                  .getProperties()
+                  .reduce((props, prop) => {
+                    return {
+                      ...props,
+                      [prop.getName()]: "TODO",
+                    };
+                  }, {});
+              }
+            }
+          }
+
+          return {
             ...props,
             [prop.getName()]: {
               type: propTypeValidator.parse(prop.getTypeNode()?.getText()),
               required: false,
             },
-          }),
-          {} as PropsSchema
-        );
+          };
+        }, {} as PropsSchema);
       }
 
       const propsTypeAlias = source.getTypeAlias("Props");

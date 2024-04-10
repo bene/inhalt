@@ -2,7 +2,7 @@ import { trpcServer } from "@hono/trpc-server";
 import {
   msgUpdateComponents,
   msgUpdatePage,
-  realtimeMessage,
+  previewBuildStatusValidator,
   type RealtimeMessage,
 } from "@inhalt/schema";
 import { Prisma } from "@prisma/client";
@@ -18,6 +18,7 @@ import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
 import { componentsRouter } from "./routers/components";
 import { pagesRouter } from "./routers/pages";
+import { previewsRouter } from "./routers/previews";
 import { projectsRouter } from "./routers/projects";
 import { router } from "./trpc";
 
@@ -192,14 +193,14 @@ app.patch(
 );
 
 app.get("/components", async (context) => {
-  const components = await prisma.component.findMany({
-    select: {
-      name: true,
-      propsSchema: true,
-    },
-  });
+  // const components = await prisma.component.findMany({
+  //   select: {
+  //     name: true,
+  //     propsSchema: true,
+  //   },
+  // });
 
-  return Response.json(components);
+  return Response.json([]);
 });
 
 app.put(
@@ -216,25 +217,22 @@ app.put(
     };
   }),
   async (context) => {
-    const { body: msg } = context.req.valid("json");
-    const existingComponents = await prisma.component.findMany();
-    const newComponents = msg.components.filter(
-      (c) => !existingComponents.some((ec) => ec.name === c.name)
-    );
-
-    await prisma.$transaction([
-      prisma.component.createMany({
-        data: newComponents.map((c) => ({
-          name: c.name,
-          propsSchema: c.propsSchema ?? Prisma.DbNull,
-        })),
-      }),
-    ]);
-
+    // const { body: msg } = context.req.valid("json");
+    // const existingComponents = await prisma.component.findMany();
+    // const newComponents = msg.components.filter(
+    //   (c) => !existingComponents.some((ec) => ec.name === c.name)
+    // );
+    // await prisma.$transaction([
+    //   prisma.component.createMany({
+    //     data: newComponents.map((c) => ({
+    //       name: c.name,
+    //       propsSchema: c.propsSchema ?? Prisma.DbNull,
+    //     })),
+    //   }),
+    // ]);
     // Notify all clients
-    broadcastRealtimeMessage(msg);
-
-    return Response.json(null, { status: 201 });
+    // broadcastRealtimeMessage(msg);
+    // return Response.json(null, { status: 201 });
   }
 );
 
@@ -262,27 +260,6 @@ app.get(
           ws,
         });
       },
-      onMessage: async (event, ws) => {
-        const msg = realtimeMessage.parse(JSON.parse(event.data.toString()));
-
-        if (msg.kind === "components:update") {
-          // TODO: Do proper diffing
-          await prisma.$transaction([
-            prisma.component.deleteMany(),
-            prisma.component.createMany({
-              data: msg.components.map((c) => ({
-                name: c.name,
-                propsSchema: c.propsSchema ?? Prisma.DbNull,
-              })),
-            }),
-          ]);
-
-          // Notify all clients
-          broadcastRealtimeMessage(msg);
-
-          return;
-        }
-      },
       onClose: () => {
         webSocketConnections.delete(connectionId);
       },
@@ -294,6 +271,7 @@ export const appRouter = router({
   components: componentsRouter,
   pages: pagesRouter,
   projects: projectsRouter,
+  previewBuilds: previewsRouter,
 });
 
 export type AppRouter = typeof appRouter;
@@ -303,6 +281,28 @@ app.use(
   trpcServer({
     router: appRouter,
   })
+);
+
+const patchPreviewBuildValidator = z.object({
+  status: previewBuildStatusValidator,
+});
+
+app.patch(
+  "/builds/:buildId",
+  validator("json", (value) => patchPreviewBuildValidator.parse(value)),
+  async (ctx) => {
+    const id = ctx.req.param("buildId");
+    const { status } = ctx.req.valid("json");
+
+    await prisma.previewBuild.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
+    });
+  }
 );
 
 Bun.serve({
