@@ -302,6 +302,8 @@ app.patch(
         status,
       },
     });
+
+    return Response.json(null, { status: 200 });
   }
 );
 
