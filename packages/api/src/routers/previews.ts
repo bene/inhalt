@@ -102,7 +102,6 @@ export const previewsRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        console.log("Updating deployment");
         const build = await prisma.previewBuild.findFirstOrThrow({
           where: {
             id: input.buildId,
@@ -192,11 +191,27 @@ export const previewsRouter = router({
 
         // Otherwise Update deployment
         try {
-          await k8sAppApi.patchNamespacedDeployment(name, "default", {
-            op: "replace",
-            path: `/spec/template/spec/containers/0/image`,
-            value: `${config.gcpArtifactRegistryUrl}${name}:${build.id}`,
-          });
+          await k8sAppApi.patchNamespacedDeployment(
+            name,
+            "default",
+            [
+              {
+                op: "replace",
+                path: `/spec/template/spec/containers/0/image`,
+                value: `${config.gcpArtifactRegistryUrl}${name}:${build.id}`,
+              },
+            ],
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              headers: {
+                "Content-Type": "application/json-patch+json",
+              },
+            }
+          );
         } catch (e: unknown) {
           if (e instanceof HttpError) {
             console.log(e.body);

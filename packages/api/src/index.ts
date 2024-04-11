@@ -14,6 +14,7 @@ import type { WSContext } from "hono/ws";
 import { z } from "zod";
 
 import { caller } from "./caller";
+import { config } from "./config";
 import { getAccessToken } from "./github/auth";
 import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
@@ -81,10 +82,8 @@ app.post("/integration/github", async (context) => {
     return Response.json(null, { status: 200 });
   }
 
-  console.log(res.data);
-
   const event = res.data;
-  const token = await getAccessToken("866924", event.installation.id);
+  const token = await getAccessToken(config.githubAppId, event.installation.id);
   const cloneUrl = `https://x-access-token:${token}@${event.repository.clone_url.slice(8)}`;
   const repo = await prisma.gitRepo.findFirst({
     where: {
