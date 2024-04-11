@@ -85,14 +85,14 @@ export async function triggerCloudBuild(cloneUrl: string) {
           "-H",
           `Content-Type:application/json`,
           "-d",
-          `'{ "status": "Successful" }'`,
+          `"{ \"status\": \"Successful\" }"`,
         ],
       },
     ],
   };
 
   const res = await client.request({
-    url: `https://cloudbuild.googleapis.com/v1/projects/${gcpProjectId}/locations/global/builds`,
+    url: `https://cloudbuild.googleapis.com/v1/projects/${gcpProjectId}/locations/europe-west3/builds`,
     method: "POST",
     body: JSON.stringify(body),
     headers: {
