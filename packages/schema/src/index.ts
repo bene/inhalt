@@ -1,12 +1,14 @@
 import { ZodSchema, z } from "zod";
 
-export const configInputValidator = z.object({
-  url: z.union([
-    z.string().startsWith("http://"),
-    z.string().startsWith("https://"),
-  ]),
-  sections: z.string(),
-});
+export const configInputValidator = z
+  .object({
+    url: z.union([
+      z.string().startsWith("http://"),
+      z.string().startsWith("https://"),
+    ]),
+    sections: z.string(),
+  })
+  .transform((config) => ({ ...config, url: new URL(config.url) }));
 
 export type ConfigInput = z.infer<typeof configInputValidator>;
 
@@ -16,8 +18,7 @@ export const configValidator = configInputValidator.transform((config) => {
 
   return {
     ...config,
-    url: new URL(config.url).toString(),
-    wsUrl: wsUrl.toString(),
+    wsUrl: wsUrl,
   };
 });
 

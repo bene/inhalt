@@ -6,7 +6,7 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
   integrations: [react(), tailwind(), inhalt({
-    url: "http://localhost:3000",
+    url: "https://6880-178-165-195-140.ngrok-free.app",
     sections: "src/sections",
   })]
 });
