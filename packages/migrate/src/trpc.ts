@@ -1,10 +1,9 @@
 import type { AppRouter } from "@inhalt/api/src";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 
-import { loadMigrateConfig, loadPluginConfig } from "./config";
+import { loadPluginConfig } from "./config";
 
-const migrateConfig = await loadMigrateConfig();
-const pluginConfig = await loadPluginConfig(migrateConfig);
+const pluginConfig = await loadPluginConfig();
 
 export const trpc = createTRPCProxyClient<AppRouter>({
   links: [
