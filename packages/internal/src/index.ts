@@ -12,16 +12,16 @@ export async function getComponents(config: Config) {
     useInMemoryFileSystem: true,
   });
 
-  const files = await readdir(join(__dirname, config.sections));
+  const files = await readdir(join(process.cwd(), config.sections));
   const components = await Promise.all(
     files.map(async (file) => {
       let propsSchema = null;
       const name = file.split(".astro")[0];
-      const path = join(__dirname, config.sections, file);
+      const path = join(process.cwd(), config.sections, file);
 
       // Parse props
       const sourceText = await readFile(
-        join(__dirname, config.sections, file),
+        join(process.cwd(), config.sections, file),
         "utf-8"
       );
       const source = project.createSourceFile(file, sourceText);
