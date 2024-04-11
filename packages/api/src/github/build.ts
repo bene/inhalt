@@ -92,7 +92,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
   };
 
   const res = await client.request({
-    url: `https://cloudbuild.googleapis.com/v1/projects/${gcpProjectId}/locations/europe-west3/builds`,
+    url: `https://cloudbuild.googleapis.com/v1/projects/${gcpProjectId}/locations/${config.gcCloudBuildLocation}/builds`,
     method: "POST",
     body: JSON.stringify(body),
     headers: {
