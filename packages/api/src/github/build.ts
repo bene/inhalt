@@ -4,14 +4,19 @@ import { GoogleAuth } from "google-auth-library";
 import { config } from "../config";
 import { prisma } from "../prisma";
 
-function generateDockerfile(buildId: string) {
+function generateDockerfile(
+  buildId: string,
+  environment: Record<string, string>
+) {
   return `FROM oven/bun:1 as build
 COPY . .
 
 FROM build as migrate
 
+${Object.entries(environment)
+  .map(([name, value]) => `ENV ${name}=${value}`)
+  .join("\n")}
 ENV INHALT_ENV=build_preview
-ENV INHALT_ROOT_DIR=./packages/example
 ENV INHALT_PREVIEW_BUILD_ID=${buildId}
 
 
@@ -21,6 +26,9 @@ RUN bunx inhalt-migrate
 
 FROM build
 
+${Object.entries(environment)
+  .map(([name, value]) => `ENV ${name}=${value}`)
+  .join("\n")}
 ENV INHALT_ENV=preview
 RUN bunx astro preferences disable devToolbar
 EXPOSE 4321
@@ -44,6 +52,19 @@ export async function triggerCloudBuild(
     },
   });
 
+  const envVariables = await prisma.previewBuildEnvironmentVariable.findMany({
+    where: {
+      projectId: project.id,
+    },
+  });
+  const env = envVariables.reduce(
+    (acc, { name, value }) => {
+      acc[name] = value;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+
   const body = {
     steps: [
       {
@@ -57,7 +78,7 @@ export async function triggerCloudBuild(
       },
       {
         name: "busybox",
-        script: `echo '${generateDockerfile(build.id)}' > Dockerfile`,
+        script: `echo '${generateDockerfile(build.id, env)}' > Dockerfile`,
       },
       {
         name: "gcr.io/cloud-builders/docker",

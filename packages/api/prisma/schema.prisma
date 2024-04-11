@@ -18,6 +18,16 @@ model PreviewBuild {
   projectId  String             @db.Uuid
 }
 
+model PreviewBuildEnvironmentVariable {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String
+  value     String
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String  @db.Uuid
+
+  @@unique([name, projectId])
+}
+
 enum PreviewBuildStatus {
   Running
   Failed
@@ -42,11 +52,12 @@ model Section {
 }
 
 model Project {
-  id            String         @id @default(uuid()) @db.Uuid
-  name          String         @unique
-  gitRepo       GitRepo?
-  pages         Page[]
-  previewBuilds PreviewBuild[]
+  id                               String                            @id @default(uuid()) @db.Uuid
+  name                             String                            @unique
+  gitRepo                          GitRepo?
+  pages                            Page[]
+  previewBuilds                    PreviewBuild[]
+  previewBuildEnvironmentVariables PreviewBuildEnvironmentVariable[]
 }
 
 model GitRepo {
