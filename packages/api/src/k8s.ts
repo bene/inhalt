@@ -6,8 +6,8 @@ import {
 } from "@kubernetes/client-node";
 
 const kc = new KubeConfig();
-kc.loadFromFile("/Users/bene/.kube/config");
+kc.loadFromDefault();
 
-export const k8sNetworkingApi = kc.makeApiClient(NetworkingV1Api);
 export const k8sCoreApi = kc.makeApiClient(CoreV1Api);
 export const k8sAppApi = kc.makeApiClient(AppsV1Api);
+export const k8sNetworkingApi = kc.makeApiClient(NetworkingV1Api);

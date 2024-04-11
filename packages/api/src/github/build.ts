@@ -34,7 +34,7 @@ export async function triggerCloudBuild(cloneUrl: string) {
   const gcpProjectId = await auth.getProjectId();
 
   const project = {
-    id: "eb9b2f94-88f0-4531-9103-209baba21c93",
+    id: "1f0ac7c9-6f95-4a16-80e9-af63d6cd466a",
     name: "hello-world",
   };
   const build = await prisma.previewBuild.create({

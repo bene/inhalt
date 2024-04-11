@@ -271,7 +271,7 @@ export const appRouter = router({
   components: componentsRouter,
   pages: pagesRouter,
   projects: projectsRouter,
-  previewBuilds: previewsRouter,
+  previews: previewsRouter,
 });
 
 export type AppRouter = typeof appRouter;

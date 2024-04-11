@@ -16,7 +16,7 @@ const components = await getComponents(pluginConfig, migrateConfig.rootDir);
 
 // Send components to API
 try {
-  await trpc.previewBuilds.update.mutate({
+  await trpc.previews.builds.update.mutate({
     buildId: import.meta.env.INHALT_PREVIEW_BUILD_ID!,
     components,
   });
