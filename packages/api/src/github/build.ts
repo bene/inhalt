@@ -19,8 +19,9 @@ ${Object.entries(environment)
 ENV INHALT_ENV=build_preview
 ENV INHALT_PREVIEW_BUILD_ID=${buildId}
 
+${Object.hasOwn(environment, "INHALT_ROOT_DIR") ? "RUN cd $INHALT_ROOT_DIR" : ""}
 
-RUN cd $INHALT_ROOT_DIR && bunx --bun astro dev
+RUN bunx --bun astro dev
 RUN bunx inhalt-migrate
 
 
@@ -29,6 +30,7 @@ FROM build
 ${Object.entries(environment)
   .map(([name, value]) => `ENV ${name}=${value}`)
   .join("\n")}
+${Object.hasOwn(environment, "INHALT_ROOT_DIR") ? "RUN cd $INHALT_ROOT_DIR" : ""}
 ENV INHALT_ENV=preview
 RUN bunx astro preferences disable devToolbar
 EXPOSE 4321
