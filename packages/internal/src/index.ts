@@ -7,21 +7,21 @@ import { readFile, readdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { Node, Project } from "ts-morph";
 
-export async function getComponents(config: Config, rootPath: string) {
+export async function getComponents(config: Config) {
   const project = new Project({
     useInMemoryFileSystem: true,
   });
 
-  const files = await readdir(join(rootPath, config.sections));
+  const files = await readdir(join(__dirname, config.sections));
   const components = await Promise.all(
     files.map(async (file) => {
       let propsSchema = null;
       const name = file.split(".astro")[0];
-      const path = join(rootPath, config.sections, file);
+      const path = join(__dirname, config.sections, file);
 
       // Parse props
       const sourceText = await readFile(
-        join(rootPath, config.sections, file),
+        join(__dirname, config.sections, file),
         "utf-8"
       );
       const source = project.createSourceFile(file, sourceText);

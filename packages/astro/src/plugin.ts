@@ -64,7 +64,7 @@ export function createAstroPlugin(configInput: ConfigInput): AstroIntegration {
         updateConfig({
           resolvedInjectedRoutes: [],
         } as any);
-        await getComponents(config, astroConfig.root.pathname);
+        await getComponents(config);
         await generateComponentsFile(
           config,
           astroConfig.root.pathname,

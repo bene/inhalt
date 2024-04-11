@@ -2,17 +2,14 @@
 
 import { getComponents } from "@inhalt/internal";
 
-import { loadMigrateConfig, loadPluginConfig } from "./config";
+import { loadPluginConfig } from "./config";
 import { trpc } from "./trpc";
 
-// Load migrate config
-const migrateConfig = await loadMigrateConfig();
-
 // Load astro plugin config
-const pluginConfig = await loadPluginConfig(migrateConfig);
+const pluginConfig = await loadPluginConfig();
 
 // Parse components
-const components = await getComponents(pluginConfig, migrateConfig.rootDir);
+const components = await getComponents(pluginConfig);
 
 // Send components to API
 try {
