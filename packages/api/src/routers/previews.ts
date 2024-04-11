@@ -123,13 +123,21 @@ export const previewsRouter = router({
         });
 
         const name = build.project.name;
-        const deployment = await k8sAppApi.readNamespacedDeployment(
-          name,
-          "default"
-        );
+        let hasDeployment: boolean;
+
+        try {
+          await k8sAppApi.readNamespacedDeployment(name, "default");
+          hasDeployment = true;
+        } catch (e: unknown) {
+          if (e instanceof HttpError && e.response.statusCode === 404) {
+            hasDeployment = false;
+          } else {
+            throw e;
+          }
+        }
 
         // If deployment does not exist, create it
-        if (!deployment) {
+        if (!hasDeployment) {
           try {
             await k8sAppApi.createNamespacedDeployment("default", {
               metadata: {

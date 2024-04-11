@@ -13,6 +13,7 @@ import { validator } from "hono/validator";
 import type { WSContext } from "hono/ws";
 import { z } from "zod";
 
+import { caller } from "./caller";
 import { getAccessToken } from "./github/auth";
 import { triggerCloudBuild } from "./github/build";
 import { prisma } from "./prisma";
@@ -294,13 +295,25 @@ app.patch(
     const id = ctx.req.param("buildId");
     const { status } = ctx.req.valid("json");
 
-    await prisma.previewBuild.update({
+    const { project } = await prisma.previewBuild.update({
       where: {
         id,
       },
       data: {
         status,
       },
+      select: {
+        project: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    await caller.internal.previews.deployments.update({
+      buildId: id,
+      projectId: project.id,
     });
 
     return Response.json(null, { status: 200 });
