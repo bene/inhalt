@@ -50,10 +50,13 @@ model Project {
 }
 
 model GitRepo {
+  id          String
   name        String
   gitProvider GitProvider
   project     Project     @relation(fields: [projectId], references: [id])
   projectId   String      @id @db.Uuid
+
+  @@index([id])
 }
 
 enum GitProvider {

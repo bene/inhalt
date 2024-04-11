@@ -81,11 +81,31 @@ app.post("/integration/github", async (context) => {
     return Response.json(null, { status: 200 });
   }
 
+  console.log(res.data);
+
   const event = res.data;
   const token = await getAccessToken("866924", event.installation.id);
   const cloneUrl = `https://x-access-token:${token}@${event.repository.clone_url.slice(8)}`;
+  const repo = await prisma.gitRepo.findFirst({
+    where: {
+      id: event.repository.id.toString(),
+      gitProvider: "GitHub",
+    },
+    select: {
+      project: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
 
-  triggerCloudBuild(cloneUrl);
+  if (!repo) {
+    return Response.json(null, { status: 404 });
+  }
+
+  triggerCloudBuild(repo.project, cloneUrl);
 
   return Response.json(null, { status: 201 });
 });
@@ -293,27 +313,11 @@ app.patch(
   validator("json", (value) => patchPreviewBuildValidator.parse(value)),
   async (ctx) => {
     const id = ctx.req.param("buildId");
-    const { status } = ctx.req.valid("json");
+    const body = ctx.req.valid("json");
 
-    const { project } = await prisma.previewBuild.update({
-      where: {
-        id,
-      },
-      data: {
-        status,
-      },
-      select: {
-        project: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    });
-
-    await caller.internal.previews.deployments.update({
+    await caller.internal.previews.builds.update({
       buildId: id,
-      projectId: project.id,
+      status: body.status,
     });
 
     return Response.json(null, { status: 200 });

@@ -1,4 +1,6 @@
+import type { Project } from "@prisma/client";
 import { GoogleAuth } from "google-auth-library";
+
 import { config } from "../config";
 import { prisma } from "../prisma";
 
@@ -25,18 +27,16 @@ EXPOSE 4321
 ENTRYPOINT ["bunx", "--bun", "astro", "dev", "--port", "4321", "--host", "0.0.0.0"]`;
 }
 
-export async function triggerCloudBuild(cloneUrl: string) {
+export async function triggerCloudBuild(
+  project: Pick<Project, "id" | "name">,
+  cloneUrl: string
+) {
   const auth = new GoogleAuth({
     keyFilename: "google-cloud-credentials.json",
     scopes: "https://www.googleapis.com/auth/cloud-platform",
   });
   const client = await auth.getClient();
   const gcpProjectId = await auth.getProjectId();
-
-  const project = {
-    id: "1f0ac7c9-6f95-4a16-80e9-af63d6cd466a",
-    name: "hello-world",
-  };
   const build = await prisma.previewBuild.create({
     data: {
       commitHash: "TODO",
