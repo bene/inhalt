@@ -137,6 +137,10 @@ export const previewsRouter = router({
 
         // If deployment does not exist, create it
         if (!hasDeployment) {
+          const imagePullSecrets = config.imagePullSecret
+            ? [{ name: config.imagePullSecret }]
+            : [];
+
           try {
             await k8sAppApi.createNamespacedDeployment("default", {
               metadata: {
@@ -170,11 +174,7 @@ export const previewsRouter = router({
                         ],
                       },
                     ],
-                    imagePullSecrets: [
-                      {
-                        name: "artifact-registry",
-                      },
-                    ],
+                    imagePullSecrets,
                   },
                 },
               },
