@@ -3,9 +3,6 @@
   "bin": {
     "inhalt-migrate": "src/index.ts"
   },
-  "scripts": {
-    "dev": "INHALT_ROOT_DIR=../example bunx --bun inhalt-migrate"
-  },
   "dependencies": {
     "@inhalt/internal": "workspace:*",
     "@inhalt/schema": "workspace:*",

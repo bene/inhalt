@@ -8,7 +8,7 @@ const componentsValidator = z.array(componentValidator);
 
 export const componentsRouter = router({
   list: publicProcedure.query(async ({ ctx, input }) => {
-    const componentsJson = await prisma.previewBuild.findFirst({
+    const lastPreviewBuild = await prisma.previewBuild.findFirst({
       where: {
         status: "Successful",
       },
@@ -20,7 +20,9 @@ export const componentsRouter = router({
       },
     });
 
-    const components = componentsValidator.parse(componentsJson);
+    const components = componentsValidator.parse(
+      lastPreviewBuild?.components ?? []
+    );
 
     return components;
   }),
